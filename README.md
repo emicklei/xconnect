@@ -1,9 +1,11 @@
-# xonnect - declaring microservices connectivity
+# xconnect - declaring microservices connectivity
+
+[![Build Status](https://travis-ci.org/emicklei/xconnect.png)](https://travis-ci.org/emicklei/xconnect)
 
 Xconnect is a structure in YAML that describes how a service can accept connections and what connections a service needs to operate.
 With this information, a static overview of the landscape of intercconnected services can be constructed.
 
-[specification in YAML](https//github.com/emicklei/xconnect/spec-xconnect.yaml)
+[specification in YAML](https://raw.githubusercontent.com/emicklei/xconnect/master/spec-xconnect.yaml)
 
 ## how does it work
 
