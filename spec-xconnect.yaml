@@ -1,0 +1,66 @@
+# This xconnect document or section is free-form YAML ; you can add keys on any level.
+# Fields that are not applicable can be ommitted.
+xconnect:
+  meta:
+    # name for discovery
+    name: account-service
+    # tagged version of the implementation
+    version: v1.2.3
+    # team that owns the code and operates it 
+    owner: team-accounts@company.net
+    labels:
+      - account
+      - registration
+      - search
+  
+  # A listen entry is used to describe how consumer can connect to this service.
+  # Fields that are not applicable can be ommitted.      
+  listen:
+    # this component identifier has local scope ; only for this service
+    <id>:
+      # if set to true, this deployment currently does not listen on this port. Default is false and field can be ommitted.
+      disabled: false      
+      host: account-service.net
+      # the one exposed through ESP (if applicable) which is a sidecar
+      port: 7070
+      # one of [http2,http,grpc,tcp] not [https]
+      scheme: http   
+      tls: true
+      gcp:
+        pubsub:
+            # other services can publish to this topic
+            topic: account_topic
+
+  # A connect entry represents an external service that is used by this service to get information from or put information to it.
+  # Fields that are not applicable can be ommitted.
+  connect:
+    # this component identifier has local scope ; only for this service 
+    <id>:
+      # if set to true, this deployment currently does not use this connection. Default is false and field can be ommitted.
+      disabled: false      
+      host: there.com
+      port: 443      
+      # one of [http2,http,grpc,tcp,jdbc] not [https].
+      scheme: grpc
+      tls: true
+
+      # if host and port is not applicable, the url can be used to specifiy a connection string.
+      # then do not duplicate information into the scheme,tls,host or port fields.
+      url: here.net:8080
+
+      # the service pulls messages from a Google PubSub subscription
+      gcp:
+        pubsub:      
+          subscription: account_subscription
+        # this property is required if the project is not the same as where the service is deployed.
+        project: account_project
+
+      # OR this component of the service uses Google DataStore to persistent entities
+      gcp:
+        datastore:
+          namespace: datastore_namespace
+
+      # OR this component of the service uses Google MemoryStore (Redis API) for a key-value store.
+      gcp:
+        memorystore:
+          instance-id: memorystore_instance_id

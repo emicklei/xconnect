@@ -1,0 +1,52 @@
+apiVersion: v1
+data:
+  application.yml: |
+    # This file holds all 'settings' for some. I.e. all the configuration that is fixed over the different environments
+
+    xconnect:
+      meta:
+        # name for discovery
+        name: account-service
+        # tagged version of the implementation
+        version: v1.2.3
+        # team that owns the code and operates it
+        owner: team accounts
+        labels:
+          - account
+          - registration
+          - search    
+      listen:
+        api:
+          scheme: grpc
+          port: 9443
+        web:
+          scheme: http
+          tls: true
+          port: 443
+      connect:
+        some-db:
+          url: jdbc:postgresql://localhost:5432/postgres?reWriteBatchedInserts=true
+        some-cache:
+          host: #REDIS_IP
+          port: 6379
+        variant-pull:
+          gcp:
+            pubsub:
+              subscription: Variant_v1-subscription
+              test:
+                topic: Variant_v1-topic
+        variant-publish:
+          gcp:
+            pubsub:
+              topic: VariantToAssortment_Push_v1-topic
+
+    spring:
+      datasource:
+        # use a reference to the actual value, within this document
+        url: ${xconnect.connect.some-db.url}
+        
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: some
+  namespace: somewhere
