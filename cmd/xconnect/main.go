@@ -20,6 +20,7 @@ var oTarget = flag.String("target", "http://localhost:8080", "destination for th
 func main() {
 	flag.Parse()
 
+	log.Println("READ ", *oInput)
 	content, err := ioutil.ReadFile(*oInput)
 	if err != nil {
 		log.Fatal(err)
@@ -44,7 +45,7 @@ func main() {
 		log.Fatal("unable to marshal into YAML", err)
 	}
 	if strings.HasPrefix(*oTarget, "http") {
-		log.Println("POST ", *oTarget)
+		log.Println("POST", *oTarget)
 		resp, err := http.Post(*oTarget, "image/jpeg", &buf)
 		if err != nil {
 			log.Fatal("unable to POST configuration", err)
@@ -55,8 +56,9 @@ func main() {
 		return
 	}
 	if strings.HasPrefix(*oTarget, "file") {
-		log.Println("WRITE ", *oTarget)
-		err := ioutil.WriteFile(*oTarget, buf.Bytes(), os.ModePerm)
+		withoutScheme := (*oTarget)[len("file://"):]
+		log.Println("WRITE", withoutScheme)
+		err := ioutil.WriteFile(withoutScheme, buf.Bytes(), os.ModePerm)
 		if err != nil {
 			log.Fatal("unable to write configuration", err)
 		}
@@ -65,6 +67,7 @@ func main() {
 }
 
 func readXConnectDocument(content []byte) (cfg xconnect.Config, err error) {
+	log.Println("PARSE xconnect configuration ", *oInput)
 	var d xconnect.Document
 	if err = yaml.Unmarshal(content, &d); err != nil {
 		return
@@ -73,6 +76,7 @@ func readXConnectDocument(content []byte) (cfg xconnect.Config, err error) {
 }
 
 func readK8S(content []byte) (cfg xconnect.Config, err error) {
+	log.Println("PARSE Kubernetes (k8s) Configuration ", *oInput)
 	var k xconnect.K8SConfiguration
 	if err = yaml.Unmarshal(content, &k); err != nil {
 		return
