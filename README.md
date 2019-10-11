@@ -30,6 +30,22 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
 
 ## Kubernetes configration (ConfigMap)
 
+    apiVersion: v1
+    data:
+        xconnect:
+            meta: 
+                ...
+            listen:
+                ...
+            connect:
+                ...
+            
+    kind: ConfigMap
+    metadata:
+        creationTimestamp: null
+        name: some
+        namespace: somewhere
+
 ## Inspiration
 
 - https://dzone.com/articles/cataloguing-microservices

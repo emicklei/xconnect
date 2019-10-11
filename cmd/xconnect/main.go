@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"io/ioutil"
 	"log"
@@ -15,7 +16,7 @@ import (
 
 var oInput = flag.String("input", "xconnect.yaml", "name of the YAML configuration file that contains a xconnect section")
 var oK8S = flag.Bool("k8s", false, "YAML is a Kubernetes configuration file with data:xconnect section")
-var oTarget = flag.String("target", "http://localhost:8080", "destination for the YAML representation of the xconnect configuration, http or file scheme")
+var oTarget = flag.String("target", "http://localhost:8080", "destination for the JSON representation of the xconnect configuration, http or file scheme")
 
 func main() {
 	flag.Parse()
@@ -40,9 +41,9 @@ func main() {
 		cfg = extracted
 	}
 	var buf bytes.Buffer
-	enc := yaml.NewEncoder(&buf)
+	enc := json.NewEncoder(&buf)
 	if err := enc.Encode(cfg); err != nil {
-		log.Fatal("unable to marshal into YAML", err)
+		log.Fatal("unable to marshal into JSON", err)
 	}
 	if strings.HasPrefix(*oTarget, "http") {
 		log.Println("POST", *oTarget)

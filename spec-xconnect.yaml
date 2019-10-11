@@ -13,7 +13,7 @@ xconnect:
       - registration
       - search
   
-  # A listen entry is used to describe how consumer can connect to this service.
+  # A listen entry is used to describe how consumers can connect to this service.
   # Fields that are not applicable can be ommitted.      
   listen:
     # this component identifier has local scope ; only for this service
