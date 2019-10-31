@@ -1,0 +1,14 @@
+meta:
+  extra0: extra0
+  nested0: 
+    sub0: sub0  
+listen:
+  id1:
+    extra1: extra1
+    nested1: 
+      sub1: sub1
+connect:
+  id2:
+    extra2: extra2
+    nested2: 
+      sub2: sub2

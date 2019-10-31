@@ -84,6 +84,10 @@ or using the Go package:
     cfg, err := k8s.ExtractConfig()
     ...
 
+## Getting the extra fields
+
+See xconnect_test.go
+
 ## Inspiration
 
 - https://dzone.com/articles/cataloguing-microservices

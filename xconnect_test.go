@@ -7,13 +7,39 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+func TestExtended(t *testing.T) {
+	d, err := ioutil.ReadFile("extended-xconnect.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var c Config
+	if err := yaml.Unmarshal(d, &c); err != nil {
+		t.Fatal(err)
+	}
+	if got, want := c.Meta.ExtraString("extra0"), "extra0"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	if got, want := c.Meta.ExtraString("nested0.sub0"), "sub0"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	if got, want := c.Listen["id1"].ExtraString("extra1"), "extra1"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	if got, want := c.Listen["id1"].ExtraString("nested1.sub1"), "sub1"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	if got, want := c.Connect["id2"].ExtraString("extra2"), "extra2"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	if got, want := c.Connect["id2"].ExtraString("nested2.sub2"), "sub2"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+}
+
 func TestSpec(t *testing.T) {
 	d, err := ioutil.ReadFile("spec-xconnect.yaml")
 	if err != nil {
 		t.Fatal(err)
-	}
-	type SpecHolder struct {
-		X Config `yaml:"xconnect"`
 	}
 	var s Document
 	if err := yaml.Unmarshal(d, &s); err != nil {
