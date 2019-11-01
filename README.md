@@ -52,6 +52,10 @@ To extract the xconnect section using the command line tool:
 
     xconnect -input application.yml -target file://xconnect-from-application.yml
 
+or POST the extracted information to an HTTP endpoint
+
+    xconnect -input application.yml -target http://some-service/v1/xconnect
+
 ## Kubernetes configration (ConfigMap)
 
     apiVersion: v1
@@ -90,3 +94,6 @@ See xconnect_test.go
 ## Inspiration
 
 - https://dzone.com/articles/cataloguing-microservices
+
+
+© 2019, ernestmicklei.com. MIT License. Contributions welcome.
