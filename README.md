@@ -26,6 +26,14 @@ Not all application configuration is related to connectivity ; the section for c
 So instead of keeping connection related information separate from the rest of the configuration, with the inevitable effect of becoming out of date, the xconnect section should be integrated in the complete configuration.
 The actual format of the xconnect data is free-form YAML, meaning that users are free to add their own service metadata if desired.
 
+## Use as Go package
+
+    This example uses *gopkg.in/yaml.v2* for parsing the configuration.
+
+    content, err := ioutil.ReadFile("xconnect.yaml")
+    var c Config
+    yaml.Unmarshal(content, &c)
+
 ## Sprint Boot application configration
 
     xconnect:

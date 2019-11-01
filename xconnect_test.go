@@ -41,11 +41,10 @@ func TestSpec(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var s Document
-	if err := yaml.Unmarshal(d, &s); err != nil {
+	var x Config
+	if err := yaml.Unmarshal(d, &x); err != nil {
 		t.Fatal(err)
 	}
-	x := s.Configuration
 	if got, want := len(x.Listen), 1; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
