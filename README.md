@@ -31,8 +31,8 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
     This example uses *gopkg.in/yaml.v2* for parsing the configuration.
 
     content, err := ioutil.ReadFile("xconnect.yaml")
-    var c Config
-    yaml.Unmarshal(content, &c)
+    var cfg xonnect.Config // use xconnect.Document if your YAML has the top level element called xconnect
+    err := yaml.Unmarshal(content, &cfg)
 
 ## Sprint Boot application configration
 
@@ -51,15 +51,6 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
 To extract the xconnect section using the command line tool:
 
     xconnect -input application.yml -target file://xconnect-from-application.yml
-
-or using the Go package:
-
-    var doc xconnect.Document
-    if err = yaml.Unmarshal(yamlContentBytes, &doc); err != nil {
-        return
-    }
-    cfg := doc.Configration
-    ...
 
 ## Kubernetes configration (ConfigMap)
 
