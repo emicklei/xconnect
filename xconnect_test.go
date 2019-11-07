@@ -12,10 +12,11 @@ func TestExtended(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var c Config
-	if err := yaml.Unmarshal(d, &c); err != nil {
+	var doc Document
+	if err := yaml.Unmarshal(d, &doc); err != nil {
 		t.Fatal(err)
 	}
+	c := doc.Config
 	if got, want := c.Meta.ExtraString("extra0"), "extra0"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
@@ -41,10 +42,11 @@ func TestSpec(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	var x Config
-	if err := yaml.Unmarshal(d, &x); err != nil {
+	var doc Document
+	if err := yaml.Unmarshal(d, &doc); err != nil {
 		t.Fatal(err)
 	}
+	x := doc.Config
 	if got, want := len(x.Listen), 1; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}

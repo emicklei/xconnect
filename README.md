@@ -28,11 +28,11 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
 
 ## Use as Go package
 
-    This example uses *gopkg.in/yaml.v2* for parsing the configuration.
+This example uses *gopkg.in/yaml.v2* for parsing the configuration.
 
     content, err := ioutil.ReadFile("your-app.yaml")
-    var cfg xonnect.Config // use xconnect.Document if your YAML has the top level element called "xconnect"
-    err := yaml.Unmarshal(content, &cfg)
+    var doc xonnect.Document
+    err := yaml.Unmarshal(content, &doc)
 
 ## Sprint Boot application configration
 

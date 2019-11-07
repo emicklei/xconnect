@@ -107,5 +107,5 @@ func (m MetaConfig) ExtraString(path string) string {
 
 // Document is the root YAML element
 type Document struct {
-	Configuration Config `yaml:"xconnect"`
+	Config Config `yaml:"xconnect"`
 }

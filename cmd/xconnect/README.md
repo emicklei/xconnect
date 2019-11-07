@@ -2,8 +2,8 @@
 
 ## extract to file
 
-    xconnect -input some-configmap-application.properties.yml -k8s -target file://sample.yml
+    xconnect -input some-configmap-application.properties.yaml -k8s -target file://sample.yaml
 
 ## POST to an HTTP endpoint
 
-    xconnect -input some-configmap-application.properties.yml -k8s -target https://some-xconnect-handling-service.net
+    xconnect -input some-configmap-application.properties.yaml -k8s -target https://some-xconnect-handling-service.net

@@ -14,7 +14,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var oInput = flag.String("input", "xconnect.yaml", "name of the YAML configuration file that contains a xconnect section")
+var oInput = flag.String("input", "your-app.yaml", "name of the YAML configuration file that contains a xconnect section")
 var oK8S = flag.Bool("k8s", false, "YAML is a Kubernetes configuration file with data:xconnect section")
 var oTarget = flag.String("target", "http://localhost:8080", "destination for the JSON representation of the xconnect configuration, http or file scheme")
 
@@ -42,7 +42,7 @@ func main() {
 	}
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
-	if err := enc.Encode(cfg); err != nil {
+	if err := enc.Encode(xconnect.Document{Config: cfg}); err != nil {
 		log.Fatal("unable to marshal into JSON", err)
 	}
 	if strings.HasPrefix(*oTarget, "http") {
@@ -73,7 +73,7 @@ func readXConnectDocument(content []byte) (cfg xconnect.Config, err error) {
 	if err = yaml.Unmarshal(content, &d); err != nil {
 		return
 	}
-	return d.Configuration, nil
+	return d.Config, nil
 }
 
 func readK8S(content []byte) (cfg xconnect.Config, err error) {
