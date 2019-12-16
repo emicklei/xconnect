@@ -26,6 +26,43 @@ Not all application configuration is related to connectivity ; the section for c
 So instead of keeping connection related information separate from the rest of the configuration, with the inevitable effect of becoming out of date, the xconnect section should be integrated in the complete configuration.
 The actual format of the xconnect data is free-form YAML, meaning that users are free to add their own service metadata if desired.
 
+## Example
+
+    xconnect:
+      meta:
+        # name for discovery
+        name: account-service
+        # tagged version of the implementation
+        version: v1.2.3
+        # team that owns the code and operates it
+        owner: team accounts
+        labels:
+          - account
+          - registration
+          - search    
+      listen:
+        api:
+          scheme: grpc
+          port: 9443
+        web:
+          scheme: http
+          tls: true
+          port: 443
+      connect:
+        some-db:
+          url: jdbc:postgresql://localhost:5432/postgres?reWriteBatchedInserts=true
+        some-cache:
+          host: #REDIS_IP
+          port: 6379
+        variant-publish:
+          gcp.pubsub:
+            topic: VariantToAssortment_Push_v1-topic          
+        variant-pull:
+          gcp.pubsub:
+            subscription: Variant_v1-subscription
+            test:
+              topic: Variant_v1-topic
+
 ## Use as Go package
 
 This example uses *gopkg.in/yaml.v2* for parsing the configuration.
@@ -35,6 +72,9 @@ This example uses *gopkg.in/yaml.v2* for parsing the configuration.
     err := yaml.Unmarshal(content, &doc)
 
 ## Sprint Boot application configration
+
+A Spring configuration needs it own root element in a YAML file.
+To use an xconnect section in this file, relevant property values should be referenced using the ${..} notation supported by Spring. 
 
     xconnect:
       meta: 
@@ -48,15 +88,16 @@ This example uses *gopkg.in/yaml.v2* for parsing the configuration.
         # use a reference to the actual value, within this document
         url: ${xconnect.connect.some-db.url}
 
+### extract
+
 To extract the xconnect section using the command line tool:
 
     xconnect -input application.yml -target file://xconnect-from-application.yml
 
-or POST the extracted information to an HTTP endpoint
-
-    xconnect -input application.yml -target http://some-service/v1/xconnect
-
 ## Kubernetes configration (ConfigMap)
+
+A Kubernetes configuration as its defined structure in a YAML file.
+To use an xconnect section in this file, its content must be inside the `data` field.
 
     apiVersion: v1
     data:
@@ -74,18 +115,11 @@ or POST the extracted information to an HTTP endpoint
         name: some
         namespace: somewhere
 
+### extract
+
 To extract the xconnect section using the command line tool:
 
     xconnect -input configmap.yml -k8s -target file://xconnect-from-configmap.yml
-
-or using the Go package:
-
-    var k8s xconnect.K8SConfiguration
-    if err = yaml.Unmarshal(yamlContentBytes, &k8s); err != nil {
-        return
-    }
-    cfg, err := k8s.ExtractConfig()
-    ...
 
 ## Getting the extra fields
 

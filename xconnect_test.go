@@ -8,7 +8,7 @@ import (
 )
 
 func TestExtended(t *testing.T) {
-	d, err := ioutil.ReadFile("extended-xconnect.yaml")
+	d, err := ioutil.ReadFile("xconnect-extended.yaml")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -20,19 +20,19 @@ func TestExtended(t *testing.T) {
 	if got, want := c.Meta.ExtraString("extra0"), "extra0"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Meta.ExtraString("nested0.sub0"), "sub0"; got != want {
+	if got, want := c.Meta.ExtraString("nested0/sub0"), "sub0"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
 	if got, want := c.Listen["id1"].ExtraString("extra1"), "extra1"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Listen["id1"].ExtraString("nested1.sub1"), "sub1"; got != want {
+	if got, want := c.Listen["id1"].ExtraString("nested1/sub1"), "sub1"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
 	if got, want := c.Connect["id2"].ExtraString("extra2"), "extra2"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Connect["id2"].ExtraString("nested2.sub2"), "sub2"; got != want {
+	if got, want := c.Connect["id2"].ExtraString("nested2/sub2"), "sub2"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
 }
@@ -75,12 +75,8 @@ func TestDumpSpec(t *testing.T) {
 	x.Listen = map[string]ListenEntry{
 		"api": ListenEntry{Scheme: "grpc"},
 	}
-	gcp := new(GCPEntry)
-	gcp.Pubsub = new(GCPPubSubEntry)
-	gcp.Pubsub.Topic = "topic"
 	x.Connect = map[string]ConnectEntry{
-		"db":  ConnectEntry{Scheme: "jdbc"},
-		"sms": ConnectEntry{GCP: gcp},
+		"db": ConnectEntry{Scheme: "jdbc"},
 	}
 	data, err := yaml.Marshal(x)
 	if err != nil {

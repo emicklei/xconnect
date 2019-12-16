@@ -25,8 +25,9 @@ xconnect:
       # one of [http2,http,grpc,tcp] not [https]
       scheme: http   
       tls: true
-      gcp:
-        pubsub:
+
+      # you can add extra fieds and structures
+      gcp.pubsub:
             # other services can publish to this topic
             topic: account_topic
 
@@ -45,21 +46,4 @@ xconnect:
 
       # if host and port is not applicable, the url can be used to specifiy a connection string.
       # then do not duplicate information into the scheme,tls,host or port fields.
-      url: here.net:8080
-
-      # the service pulls messages from a Google PubSub subscription
-      gcp:
-        pubsub:      
-          subscription: account_subscription
-        # this property is required if the project is not the same as where the service is deployed.
-        project: account_project
-
-      # OR this component of the service uses Google DataStore to persistent entities
-      gcp:
-        datastore:
-          namespace: datastore_namespace
-
-      # OR this component of the service uses Google MemoryStore (Redis API) for a key-value store.
-      gcp:
-        memorystore:
-          instance-id: memorystore_instance_id
+      url: http://here.net:8080

@@ -29,22 +29,20 @@ data:
         some-cache:
           host: #REDIS_IP
           port: 6379
-        variant-pull:
-          gcp:
-            pubsub:
-              subscription: Variant_v1-subscription
-              test:
-                topic: Variant_v1-topic
         variant-publish:
-          gcp:
-            pubsub:
-              topic: VariantToAssortment_Push_v1-topic
+          gcp.pubsub:
+            topic: VariantToAssortment_Push_v1-topic          
+        variant-pull:
+          gcp.pubsub:
+            subscription: Variant_v1-subscription
+            test:
+              topic: Variant_v1-topic
 
     spring:
       datasource:
         # use a reference to the actual value, within this document
         url: ${xconnect.connect.some-db.url}
-        
+
 kind: ConfigMap
 metadata:
   creationTimestamp: null

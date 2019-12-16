@@ -7,8 +7,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func TestSome(t *testing.T) {
-	d, err := ioutil.ReadFile("some-configmap-application.properties.yml")
+func TestKubernetesSome(t *testing.T) {
+	d, err := ioutil.ReadFile("kubernetes_configmap-application.properties.yml")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,10 +26,16 @@ func TestSome(t *testing.T) {
 	if got, want := len(x.Connect), 4; got != want {
 		t.Errorf("got [%d] want [%d]", got, want)
 	}
-	if x.Connect["variant-pull"].GCP == nil {
-		t.Fatal("missing variant-pull gcp", x.Connect["variant-pull"])
+	if got, want := len(x.Connect["variant-publish"].ExtraFields), 1; got != want {
+		t.Fatalf("got [%d] extra fields want [%d]", got, want)
 	}
-	if got, want := x.Connect["variant-pull"].GCP.Pubsub.Subscription, "Variant_v1-subscription"; got != want {
+	if got, want := x.Connect["variant-publish"].ExtraString("gcp.pubsub/topic"), "VariantToAssortment_Push_v1-topic"; got != want {
+		t.Errorf("got [%s] want [%s]", got, want)
+	}
+	if got, want := len(x.Connect["variant-pull"].ExtraFields), 1; got != want {
+		t.Fatalf("got [%d] extra fields want [%d]", got, want)
+	}
+	if got, want := x.Connect["variant-pull"].ExtraString("gcp.pubsub/subscription"), "Variant_v1-subscription"; got != want {
 		t.Errorf("got [%s] want [%s]", got, want)
 	}
 }

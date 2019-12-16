@@ -14,13 +14,19 @@ type ListenEntry struct {
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
 
-// ExtraString return a string for a give dotted path.
+const extraPathSeparator = "/"
+
+// ExtraString return a string for a given path (using slashes).
 func (e ListenEntry) ExtraString(path string) string {
-	keys := strings.Split(path, ".")
+	keys := strings.Split(path, extraPathSeparator)
 	return findString(keys, e.ExtraFields)
 }
 
 func findString(path []string, tree map[string]interface{}) string {
+	if len(tree) == 0 {
+		log.Println("warn: xconnect, empty extra fields")
+		return ""
+	}
 	if len(path) == 0 {
 		log.Println("warn: xconnect, empty key", path[0])
 		return ""
@@ -71,14 +77,11 @@ type ConnectEntry struct {
 	URL         string                 `yaml:"url,omitempty" json:"url,omitempty"`
 	Disabled    bool                   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
-
-	// GoogleServices
-	GCP *GCPEntry `yaml:"gcp,omitempty" json:"gcp,omitempty"`
 }
 
 // ExtraString return a string for a give dotted path.
 func (e ConnectEntry) ExtraString(path string) string {
-	keys := strings.Split(path, ".")
+	keys := strings.Split(path, extraPathSeparator)
 	return findString(keys, e.ExtraFields)
 }
 
@@ -101,7 +104,7 @@ type MetaConfig struct {
 
 // ExtraString return a string for a give dotted path.
 func (m MetaConfig) ExtraString(path string) string {
-	keys := strings.Split(path, ".")
+	keys := strings.Split(path, extraPathSeparator)
 	return findString(keys, m.ExtraFields)
 }
 

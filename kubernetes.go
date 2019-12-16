@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/mitchellh/mapstructure"
 	"gopkg.in/yaml.v2"
 )
 
@@ -53,6 +52,8 @@ func (k K8SConfiguration) ExtractConfig() (x Config, err error) {
 	if !ok {
 		return x, errors.New("missing key: [xconnect]")
 	}
-	err = mapstructure.Decode(xconnect, &x)
+	// encode and decode again
+	encoded, _ := yaml.Marshal(xconnect)
+	err = yaml.Unmarshal(encoded, &x)
 	return
 }
