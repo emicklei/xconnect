@@ -42,9 +42,11 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
           - search    
       listen:
         api:
+          host: localhost
           scheme: grpc
           port: 9443
         web:
+          host: localhost
           scheme: http
           tls: true
           port: 443
@@ -70,11 +72,16 @@ This example uses *gopkg.in/yaml.v2* for parsing the configuration.
     content, err := ioutil.ReadFile("your-app.yaml")
     var doc xonnect.Document
     err := yaml.Unmarshal(content, &doc)
+    cfg := doc.Config
+
+    version := cfg.Meta.Version
+    webPort := cfg.Listen["web"].Port
+    variantPullTestTopic := cfg.Connect["variant-pull"].ExtraString("gcp.pubsub/test/topic")
 
 ## Sprint Boot application configration
 
 A Spring configuration needs it own root element in a YAML file.
-To use an xconnect section in this file, relevant property values should be referenced using the ${..} notation supported by Spring. 
+To use an xconnect section in this file, relevant property values should be referenced using the ${..} notation supported by Spring.
 
     xconnect:
       meta: 
