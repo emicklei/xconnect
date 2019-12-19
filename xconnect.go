@@ -8,8 +8,9 @@ import (
 // ListenEntry is a list element in the xconnect.accept config.
 type ListenEntry struct {
 	Scheme      string                 `yaml:"scheme,omitempty" json:"scheme,omitempty"`
-	TLS         *bool                  `yaml:"tls,omitempty" json:"tls,omitempty"`
+	Host        string                 `yaml:"host,omitempty" json:"host,omitempty"`
 	Port        *int                   `yaml:"port,omitempty" json:"port,omitempty"`
+	TLS         *bool                  `yaml:"tls,omitempty" json:"tls,omitempty"`
 	Disabled    bool                   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
