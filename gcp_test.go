@@ -19,7 +19,7 @@ xconnect:
 		t.Fatal(err)
 	}
 	x := doc.Config
-	if got, want := x.Connect["accounts"].ExtraString("gcp.datastore/kind"), "Account"; got != want {
+	if got, want := x.Connect["accounts"].FindString("gcp.datastore/kind"), "Account"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
 }

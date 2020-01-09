@@ -17,22 +17,28 @@ func TestExtended(t *testing.T) {
 		t.Fatal(err)
 	}
 	c := doc.Config
-	if got, want := c.Meta.ExtraString("extra0"), "extra0"; got != want {
+	if got, want := c.Meta.FindString("extra0"), "extra0"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Meta.ExtraString("nested0/sub0"), "sub0"; got != want {
+	if got, want := c.Meta.FindString("nested0/sub0"), "sub0"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Listen["id1"].ExtraString("extra1"), "extra1"; got != want {
+	if got, want := c.Listen["id1"].FindString("extra1"), "extra1"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Listen["id1"].ExtraString("nested1/sub1"), "sub1"; got != want {
+	if got, want := c.Listen["id1"].FindString("nested1/sub1"), "sub1"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Connect["id2"].ExtraString("extra2"), "extra2"; got != want {
+	if got, want := c.Connect["id2"].FindString("extra2"), "extra2"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Connect["id2"].ExtraString("nested2/sub2"), "sub2"; got != want {
+	if got, want := c.Connect["id2"].FindString("nested2/sub2"), "sub2"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	if got, want := c.Connect["id2"].FindString("host"), "notextra"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	if got, want := c.Connect["id2"].FindInt("port"), -1; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
 }

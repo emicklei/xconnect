@@ -10,6 +10,8 @@ xconnect:
         sub1: sub1
   connect:
     id2:
+      host:  notextra
+      port:  -1
       extra2: extra2
       nested2:
         sub2: sub2

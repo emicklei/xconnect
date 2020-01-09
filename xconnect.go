@@ -17,56 +17,35 @@ type ListenEntry struct {
 
 const extraPathSeparator = "/"
 
-// ExtraString return a string for a given path (using slashes).
-func (e ListenEntry) ExtraString(path string) string {
+// FindString return a string for a given path (using slashes).
+func (e ListenEntry) FindString(path string) string {
 	keys := strings.Split(path, extraPathSeparator)
-	return findString(keys, e.ExtraFields)
-}
-
-func findString(path []string, tree map[string]interface{}) string {
-	if len(tree) == 0 {
-		log.Println("warn: xconnect, empty extra fields")
+	withFixed := copy(e.ExtraFields)
+	withFixed["scheme"] = e.Scheme
+	withFixed["host"] = e.Host
+	v := find(keys, withFixed)
+	if s, ok := v.(string); !ok {
+		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
 		return ""
-	}
-	if len(path) == 0 {
-		log.Println("warn: xconnect, empty key", path[0])
-		return ""
-	}
-	if len(path) == 1 {
-		f, ok := tree[path[0]]
-		if !ok {
-			log.Println("warn: xconnect, no such key", path[0])
-			return ""
-		}
-		s, ok := f.(string)
-		if !ok {
-			log.Println("warn: xconnect, value not a string for key", path[0])
-			return ""
-		}
+	} else {
 		return s
 	}
-	// > 1
-	f, ok := tree[path[0]]
-	if !ok {
-		log.Println("warn: xconnect, no such key", path[0])
-		return ""
+}
+
+// FindInt returns an int for a given path (using slashes).
+func (e ListenEntry) FindInt(path string) int {
+	keys := strings.Split(path, extraPathSeparator)
+	withFixed := copy(e.ExtraFields)
+	if e.Port != nil {
+		withFixed["port"] = *e.Port
 	}
-	mi, ok := f.(map[interface{}]interface{})
-	if !ok {
-		log.Printf("warn: xconnect, value is not a map, but a %T for key %s\n", f, path[0])
-		return ""
+	v := find(keys, withFixed)
+	if i, ok := v.(int); !ok {
+		log.Printf("warn: xconnect, value is not a int, but a %T for path %s\n", v, path)
+		return 0
+	} else {
+		return i
 	}
-	// do the copy
-	m := map[string]interface{}{}
-	for k, v := range mi {
-		sk, ok := k.(string)
-		if !ok {
-			log.Printf("warn: xconnect, key %s is not a string but %T\n", k, k)
-		} else {
-			m[sk] = v
-		}
-	}
-	return findString(path[1:], m)
 }
 
 // ConnectEntry is a list element in the xconnect.connect config.
@@ -80,10 +59,36 @@ type ConnectEntry struct {
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
 
-// ExtraString return a string for a give dotted path.
-func (e ConnectEntry) ExtraString(path string) string {
+// FindString return a string for a give dotted path.
+func (e ConnectEntry) FindString(path string) string {
 	keys := strings.Split(path, extraPathSeparator)
-	return findString(keys, e.ExtraFields)
+	withFixed := copy(e.ExtraFields)
+	withFixed["scheme"] = e.Scheme
+	withFixed["host"] = e.Host
+	withFixed["url"] = e.URL
+	v := find(keys, withFixed)
+	if s, ok := v.(string); !ok {
+		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
+		return ""
+	} else {
+		return s
+	}
+}
+
+// FindInt returns an int for a given path (using slashes).
+func (e ConnectEntry) FindInt(path string) int {
+	keys := strings.Split(path, extraPathSeparator)
+	withFixed := copy(e.ExtraFields)
+	if e.Port != nil {
+		withFixed["port"] = *e.Port
+	}
+	v := find(keys, withFixed)
+	if i, ok := v.(int); !ok {
+		log.Printf("warn: xconnect, value is not a int, but a %T for path %s\n", v, path)
+		return 0
+	} else {
+		return i
+	}
 }
 
 // Config represents the xconnect data section of a YAML document.
@@ -103,10 +108,20 @@ type MetaConfig struct {
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
 
-// ExtraString return a string for a give dotted path.
-func (m MetaConfig) ExtraString(path string) string {
+// FindString return a string for a given slash path.
+func (m MetaConfig) FindString(path string) string {
 	keys := strings.Split(path, extraPathSeparator)
-	return findString(keys, m.ExtraFields)
+	withFixed := copy(m.ExtraFields)
+	withFixed["name"] = m.Name
+	withFixed["version"] = m.Version
+	withFixed["owner"] = m.Owner
+	v := find(keys, withFixed)
+	if s, ok := v.(string); !ok {
+		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
+		return ""
+	} else {
+		return s
+	}
 }
 
 // Document is the root YAML element
