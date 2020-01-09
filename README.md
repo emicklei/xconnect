@@ -79,8 +79,12 @@ This example uses *gopkg.in/yaml.v2* for parsing the configuration.
     cfg := doc.Config
 
     version := cfg.Meta.Version
+    // alternative: cfg.Meta.FindString("version")
+    
     webPort := cfg.Listen["web"].Port
-    variantPullTestTopic := cfg.Connect["variant-pull"].ExtraString("gcp.pubsub/test/topic")
+    // alternative: cfg.Listen["web"].FindInt("port")
+    
+    variantPullTestTopic := cfg.Connect["variant-pull"].FindString("gcp.pubsub/test/topic")
 
 ## Sprint Boot application configration
 
