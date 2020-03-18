@@ -1,4 +1,4 @@
-# This xconnect document or section is free-form YAML ; you can add keys on any level.
+# This xconnect document or section is free-form YAML ; you can add keys on any level, except directly under "listen" and "connect".
 # Fields that are not applicable can be ommitted.
 xconnect:  
   meta:
@@ -23,7 +23,7 @@ xconnect:
       # the one exposed through ESP (if applicable) which is a sidecar
       port: 7070
       # one of [http2,http,grpc,tcp] not [https]
-      scheme: http   
+      protocol: http   
       tls: true
 
       # you can add extra fieds and structures
@@ -41,7 +41,7 @@ xconnect:
       host: there.com
       port: 443      
       # one of [http2,http,grpc,tcp,jdbc] not [https].
-      scheme: grpc
+      protocol: grpc
       tls: true
 
       # if host and port is not applicable, the url can be used to specifiy a connection string.

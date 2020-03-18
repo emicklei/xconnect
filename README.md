@@ -43,11 +43,11 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
       listen:
         api:
           host: localhost
-          scheme: grpc
+          protocol: grpc
           port: 9443
         web:
           host: localhost
-          scheme: http
+          protocol: http
           tls: true
           port: 443
       connect:

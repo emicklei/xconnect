@@ -17,10 +17,10 @@ data:
           - search    
       listen:
         api:
-          scheme: grpc
+          protocol: grpc
           port: 9443
         web:
-          scheme: http
+          protocol: http
           tls: true
           port: 443
       connect:

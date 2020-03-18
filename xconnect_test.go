@@ -61,7 +61,7 @@ func TestSpec(t *testing.T) {
 	}
 	// assert it all
 	idc := x.Connect["<id>"]
-	if got, want := idc.Scheme, "grpc"; got != want {
+	if got, want := idc.Protocol, "grpc"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
 	if got, want := *idc.TLS, true; got != want {
@@ -79,10 +79,10 @@ func TestSpec(t *testing.T) {
 func TestDumpSpec(t *testing.T) {
 	x := Config{}
 	x.Listen = map[string]ListenEntry{
-		"api": ListenEntry{Scheme: "grpc"},
+		"api": ListenEntry{Protocol: "grpc"},
 	}
 	x.Connect = map[string]ConnectEntry{
-		"db": ConnectEntry{Scheme: "jdbc"},
+		"db": ConnectEntry{Protocol: "jdbc"},
 	}
 	data, err := yaml.Marshal(x)
 	if err != nil {

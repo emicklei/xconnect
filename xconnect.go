@@ -7,7 +7,7 @@ import (
 
 // ListenEntry is a list element in the xconnect.accept config.
 type ListenEntry struct {
-	Scheme      string                 `yaml:"scheme,omitempty" json:"scheme,omitempty"`
+	Protocol    string                 `yaml:"protocol,omitempty" json:"scheme,omitempty"`
 	Host        string                 `yaml:"host,omitempty" json:"host,omitempty"`
 	Port        *int                   `yaml:"port,omitempty" json:"port,omitempty"`
 	TLS         *bool                  `yaml:"tls,omitempty" json:"tls,omitempty"`
@@ -21,7 +21,7 @@ const extraPathSeparator = "/"
 func (e ListenEntry) FindString(path string) string {
 	keys := strings.Split(path, extraPathSeparator)
 	withFixed := copy(e.ExtraFields)
-	withFixed["scheme"] = e.Scheme
+	withFixed["protocol"] = e.Protocol
 	withFixed["host"] = e.Host
 	v := find(keys, withFixed)
 	if s, ok := v.(string); !ok {
@@ -50,7 +50,7 @@ func (e ListenEntry) FindInt(path string) int {
 
 // ConnectEntry is a list element in the xconnect.connect config.
 type ConnectEntry struct {
-	Scheme      string                 `yaml:"scheme,omitempty" json:"scheme,omitempty"`
+	Protocol    string                 `yaml:"protocol,omitempty" json:"scheme,omitempty"`
 	TLS         *bool                  `yaml:"tls,omitempty" json:"tls,omitempty"`
 	Host        string                 `yaml:"host,omitempty" json:"host,omitempty"`
 	Port        *int                   `yaml:"port,omitempty" json:"port,omitempty"`
@@ -63,7 +63,7 @@ type ConnectEntry struct {
 func (e ConnectEntry) FindString(path string) string {
 	keys := strings.Split(path, extraPathSeparator)
 	withFixed := copy(e.ExtraFields)
-	withFixed["scheme"] = e.Scheme
+	withFixed["protocol"] = e.Protocol
 	withFixed["host"] = e.Host
 	withFixed["url"] = e.URL
 	v := find(keys, withFixed)
