@@ -10,8 +10,8 @@ data:
         # tagged version of the implementation
         version: v1.2.3
         # team that owns the code and operates it
-        owner: team accounts
-        labels:
+        opex: team accounts
+        tags:
           - account
           - registration
           - search    

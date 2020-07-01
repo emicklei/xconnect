@@ -101,10 +101,11 @@ type Config struct {
 
 // MetaConfig represents the meta element in the xconnect data section.
 type MetaConfig struct {
-	Name        string                 `yaml:"name,omitempty" json:"name,omitempty"`
-	Version     string                 `yaml:"version,omitempty" json:"version,omitempty"`
-	Owner       string                 `yaml:"owner,omitempty" json:"owner,omitempty"`
-	Labels      []string               `yaml:"labels,omitempty" json:"labels,omitempty"`
+	Name    string `yaml:"name,omitempty" json:"name,omitempty"`
+	Version string `yaml:"version,omitempty" json:"version,omitempty"`
+	// Operational expenditure, or owner
+	Opex        string                 `yaml:"opex,omitempty" json:"opex,omitempty"`
+	Labels      []string               `yaml:"tags,omitempty" json:"tags,omitempty"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
 
@@ -114,7 +115,7 @@ func (m MetaConfig) FindString(path string) string {
 	withFixed := copy(m.ExtraFields)
 	withFixed["name"] = m.Name
 	withFixed["version"] = m.Version
-	withFixed["owner"] = m.Owner
+	withFixed["opex"] = m.Opex
 	v := find(keys, withFixed)
 	if s, ok := v.(string); !ok {
 		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)

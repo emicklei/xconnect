@@ -20,9 +20,9 @@ The xconnect section of a configuration (now YAML only), consists of 3 parts:
 
 - description of what a service can provide by connecting to it, the *listen* part.
 - description of what a service needs to consume or produce to using a connection, the *connect* part
-- metadata about the service such as version, ownership and custom labels.
+- metadata about the service such as version, opex (ownership) and custom tags.
 
-Not all application configuration is related to connectivity ; the section for connectivity can be part of it.
+Not all application configuration is related to connectivity ; the section for connectivity can be part of it (embedding).
 So instead of keeping connection related information separate from the rest of the configuration, with the inevitable effect of becoming out of date, the xconnect section should be integrated in the complete configuration.
 The actual format of the xconnect data is free-form YAML, meaning that users are free to add their own service metadata if desired.
 
@@ -35,8 +35,8 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
         # tagged version of the implementation
         version: v1.2.3
         # team that owns the code and operates it
-        owner: team accounts
-        labels:
+        opex: team accounts
+        tags:
           - account
           - registration
           - search    

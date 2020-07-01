@@ -7,8 +7,8 @@ xconnect:
     # tagged version of the implementation
     version: v1.2.3
     # team that owns the code and operates it 
-    owner: team-accounts@company.net
-    labels:
+    opex: team-accounts@company.net
+    tags:
       - account
       - registration
       - search
