@@ -56,6 +56,7 @@ type ConnectEntry struct {
 	Port        *int                   `yaml:"port,omitempty" json:"port,omitempty"`
 	URL         string                 `yaml:"url,omitempty" json:"url,omitempty"`
 	Disabled    bool                   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
+	Kind        string                 `yaml:"kind,omitempty" json:"kind,omitempty"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
 

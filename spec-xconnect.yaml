@@ -47,3 +47,7 @@ xconnect:
       # if host and port is not applicable, the url can be used to specifiy a connection string.
       # then do not duplicate information into the scheme,tls,host or port fields.
       url: http://here.net:8080
+
+      # hint what kind of service this is for labelling
+      # e.g. memorystore, postgres, bigquery,...
+      kind: elastic

@@ -73,7 +73,9 @@ func TestSpec(t *testing.T) {
 	if got, want := idc.Host, "there.com"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-
+	if got, want := idc.Kind, "elastic"; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
 }
 
 func TestDumpSpec(t *testing.T) {
