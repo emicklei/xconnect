@@ -24,7 +24,7 @@ xconnect:
       port: 7070
       # one of [http2,http,grpc,tcp] not [https]
       protocol: http   
-      tls: true
+      secure: true
 
       # you can add extra fieds and structures
       gcp.pubsub:
@@ -42,7 +42,7 @@ xconnect:
       port: 443      
       # one of [http2,http,grpc,tcp,jdbc] not [https].
       protocol: grpc
-      tls: true
+      secure: true
 
       # if host and port is not applicable, the url can be used to specifiy a connection string.
       # then do not duplicate information into the scheme,tls,host or port fields.

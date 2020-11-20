@@ -64,7 +64,7 @@ func TestSpec(t *testing.T) {
 	if got, want := idc.Protocol, "grpc"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := *idc.TLS, true; got != want {
+	if got, want := *idc.Secure, true; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
 	if got, want := idc.Disabled, false; got != want {
@@ -81,10 +81,10 @@ func TestSpec(t *testing.T) {
 func TestDumpSpec(t *testing.T) {
 	x := Config{}
 	x.Listen = map[string]ListenEntry{
-		"api": ListenEntry{Protocol: "grpc"},
+		"api": {Protocol: "grpc"},
 	}
 	x.Connect = map[string]ConnectEntry{
-		"db": ConnectEntry{Protocol: "jdbc"},
+		"db": {Protocol: "jdbc"},
 	}
 	data, err := yaml.Marshal(x)
 	if err != nil {

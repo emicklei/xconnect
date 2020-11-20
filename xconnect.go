@@ -10,7 +10,7 @@ type ListenEntry struct {
 	Protocol    string                 `yaml:"protocol,omitempty" json:"scheme,omitempty"`
 	Host        string                 `yaml:"host,omitempty" json:"host,omitempty"`
 	Port        *int                   `yaml:"port,omitempty" json:"port,omitempty"`
-	TLS         *bool                  `yaml:"tls,omitempty" json:"tls,omitempty"`
+	Secure      *bool                  `yaml:"secure,omitempty" json:"secure,omitempty"`
 	Disabled    bool                   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
@@ -51,7 +51,7 @@ func (e ListenEntry) FindInt(path string) int {
 // ConnectEntry is a list element in the xconnect.connect config.
 type ConnectEntry struct {
 	Protocol    string                 `yaml:"protocol,omitempty" json:"scheme,omitempty"`
-	TLS         *bool                  `yaml:"tls,omitempty" json:"tls,omitempty"`
+	Secure      *bool                  `yaml:"secure,omitempty" json:"secure,omitempty"`
 	Host        string                 `yaml:"host,omitempty" json:"host,omitempty"`
 	Port        *int                   `yaml:"port,omitempty" json:"port,omitempty"`
 	URL         string                 `yaml:"url,omitempty" json:"url,omitempty"`

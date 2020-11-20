@@ -48,7 +48,7 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
         web:
           host: localhost
           protocol: http
-          tls: true
+          secure: true
           port: 443
       connect:
         some-db:
@@ -145,4 +145,4 @@ See xconnect_test.go
 - https://dzone.com/articles/cataloguing-microservices
 
 
-© 2019, ernestmicklei.com. MIT License. Contributions welcome.
+© 2019, [ernestmicklei.com](http://ernestmicklei.com). MIT License. Contributions welcome.
