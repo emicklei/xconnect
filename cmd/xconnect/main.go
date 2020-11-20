@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,14 +15,19 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var oInput = flag.String("input", "your-app.yaml", "name of the YAML configuration file that contains a xconnect section")
+var oInput = flag.String("input", "", "name of the YAML configuration file that contains a xconnect section")
 var oK8S = flag.Bool("k8s", false, "YAML is a Kubernetes configuration file with data:xconnect section")
-var oTarget = flag.String("target", "http://localhost:8080", "destination for the JSON representation of the xconnect configuration, http or file scheme")
+var oTarget = flag.String("target", "", "destination for the JSON representation of the xconnect configuration, http or file scheme")
 
 func main() {
 	flag.Parse()
 
-	log.Println("READ ", *oInput)
+	if len(os.Args) < 2 {
+		fmt.Println("usage:  xconnect [action] [flags]")
+		os.Exit(1)
+	}
+
+	log.Printf("[xconnect] reading [%s]\n", *oInput)
 	content, err := ioutil.ReadFile(*oInput)
 	if err != nil {
 		log.Fatal(err)
@@ -58,17 +64,18 @@ func main() {
 	}
 	if strings.HasPrefix(*oTarget, "file") {
 		withoutScheme := (*oTarget)[len("file://"):]
-		log.Println("WRITE", withoutScheme)
+		log.Println("[xconnect] ", withoutScheme)
 		err := ioutil.WriteFile(withoutScheme, buf.Bytes(), os.ModePerm)
 		if err != nil {
 			log.Fatal("unable to write configuration", err)
 		}
 		return
 	}
+	log.Println("[xconnect] OK")
 }
 
 func readXConnectDocument(content []byte) (cfg xconnect.Config, err error) {
-	log.Println("PARSE xconnect configuration ", *oInput)
+	log.Println("[xconnect] parse xconnect configuration", *oInput)
 	var d xconnect.Document
 	if err = yaml.Unmarshal(content, &d); err != nil {
 		return
@@ -77,7 +84,7 @@ func readXConnectDocument(content []byte) (cfg xconnect.Config, err error) {
 }
 
 func readK8S(content []byte) (cfg xconnect.Config, err error) {
-	log.Println("PARSE Kubernetes (k8s) Configuration ", *oInput)
+	log.Println("PARSE Kubernetes (k8s) Configuration", *oInput)
 	var k xconnect.K8SConfiguration
 	if err = yaml.Unmarshal(content, &k); err != nil {
 		return

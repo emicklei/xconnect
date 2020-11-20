@@ -1,5 +1,9 @@
 # xconnect - command line tool
 
+## validate a file
+
+    xconnect -input some-configmap-application.properties.yaml
+
 ## extract to file
 
     xconnect -input some-configmap-application.properties.yaml -k8s -target file://sample.yaml
