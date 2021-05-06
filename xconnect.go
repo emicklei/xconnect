@@ -1,6 +1,7 @@
 package xconnect
 
 import (
+	"fmt"
 	"log"
 	"strings"
 )
@@ -48,6 +49,10 @@ func (e ListenEntry) FindInt(path string) int {
 	}
 }
 
+func (e ListenEntry) NetworkID() string {
+	return fmt.Sprintf("%s:%d", e.Host, *e.Port)
+}
+
 // ConnectEntry is a list element in the xconnect.connect config.
 type ConnectEntry struct {
 	Protocol    string                 `yaml:"protocol,omitempty" json:"scheme,omitempty"`
@@ -58,6 +63,10 @@ type ConnectEntry struct {
 	Disabled    bool                   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
 	Kind        string                 `yaml:"kind,omitempty" json:"kind,omitempty"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
+}
+
+type ConnectionEnd interface {
+	NetworkID() string
 }
 
 // FindString return a string for a give dotted path.
@@ -74,6 +83,14 @@ func (e ConnectEntry) FindString(path string) string {
 	} else {
 		return s
 	}
+}
+
+func (e ConnectEntry) NetworkID() string {
+	// URL overrides Host+Port
+	if len(e.URL) != 0 {
+		return e.URL
+	}
+	return fmt.Sprintf("%s:%d", e.Host, *e.Port)
 }
 
 // FindInt returns an int for a given path (using slashes).
