@@ -76,7 +76,7 @@ func addToGraph(cfg xconnect.Config, g *dot.Graph) {
 	for k := range cfg.Connect {
 		id := fmt.Sprintf("%s/%s", cfg.Meta.Name, k)
 		// https://graphviz.org/doc/info/shapes.html#polygon
-		s.Node(id).Label(k).Attr("shape", "invhouse")
+		s.Node(id).Label(k).Attr("shape", "box")
 	}
 
 }
