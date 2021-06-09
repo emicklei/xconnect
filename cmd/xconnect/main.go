@@ -15,6 +15,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var oDot = flag.Bool("dot", false, "generate a DOT file")
 var oInput = flag.String("input", "", "name of the YAML configuration file that contains a xconnect section")
 var oK8S = flag.Bool("k8s", false, "YAML is a Kubernetes configuration file with data:xconnect section")
 var oTarget = flag.String("target", "", "destination for the JSON representation of the xconnect configuration, http or file scheme")
@@ -25,6 +26,11 @@ func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("usage:  xconnect [action] [flags]")
 		os.Exit(1)
+	}
+
+	if *oDot {
+		makeGraph()
+		return
 	}
 
 	log.Printf("[xconnect] reading [%s]\n", *oInput)

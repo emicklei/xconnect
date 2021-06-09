@@ -19,9 +19,9 @@ import (
 var master = dot.NewGraph(dot.Directed)
 var networkIDtoNode = map[string]dot.Node{}
 
-// xview | dot -Tpng  > graph.png && open graph.png
+// xconnect -dot | dot -Tpng  > graph.png && open graph.png
 
-func main() {
+func makeGraph() {
 	cfgs := []xconnect.Config{}
 	for _, each := range collectYAMLnames() {
 		d, err := loadDocument(each)
