@@ -68,6 +68,9 @@ func loadDocument(name string) (xconnect.Document, error) {
 
 func addToGraph(cfg xconnect.Config, g *dot.Graph) {
 	s := g.Subgraph(cfg.Meta.Name, dot.ClusterOption{})
+	s.Attr("style", "rounded")
+	// TODO read from config
+	//s.Attr("bgcolor", "#F5BDA2")
 	for k, v := range cfg.Listen {
 		id := fmt.Sprintf("%s/%s", cfg.Meta.Name, k)
 		n := s.Node(id).Label(k)
@@ -76,7 +79,7 @@ func addToGraph(cfg xconnect.Config, g *dot.Graph) {
 	for k := range cfg.Connect {
 		id := fmt.Sprintf("%s/%s", cfg.Meta.Name, k)
 		// https://graphviz.org/doc/info/shapes.html#polygon
-		s.Node(id).Label(k).Attr("shape", "box")
+		s.Node(id).Label(k).Attr("shape", "plaintext")
 	}
 
 }
@@ -88,9 +91,9 @@ func connectInGraph(cfg xconnect.Config, g *dot.Graph) {
 		from := s.Node(id)
 		to, ok := networkIDtoNode[v.NetworkID()]
 		if ok {
-			from.Edge(to)
+			from.Edge(to).Attr("arrowtail", "dot").Attr("dir", "both")
 		} else {
-			//fmt.Println("not found:", v.NetworkID())
+			fmt.Fprintf(os.Stderr, "[xconnect] no config or listen entry found: %s\n", v.NetworkID())
 		}
 	}
 }

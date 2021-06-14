@@ -50,7 +50,11 @@ func (e ListenEntry) FindInt(path string) int {
 }
 
 func (e ListenEntry) NetworkID() string {
-	return fmt.Sprintf("%s:%d", e.Host, *e.Port)
+	p := 0
+	if e.Port != nil {
+		p = *e.Port
+	}
+	return fmt.Sprintf("%s:%d", e.Host, p)
 }
 
 // ConnectEntry is a list element in the xconnect.connect config.
@@ -90,7 +94,11 @@ func (e ConnectEntry) NetworkID() string {
 	if len(e.URL) != 0 {
 		return e.URL
 	}
-	return fmt.Sprintf("%s:%d", e.Host, *e.Port)
+	p := 0
+	if e.Port != nil {
+		p = *e.Port
+	}
+	return fmt.Sprintf("%s:%d", e.Host, p)
 }
 
 // FindInt returns an int for a given path (using slashes).
