@@ -8,9 +8,11 @@ import (
 
 // ListenEntry is a list element in the xconnect.accept config.
 type ListenEntry struct {
-	Protocol    string                 `yaml:"protocol,omitempty" json:"scheme,omitempty"`
-	Host        string                 `yaml:"host,omitempty" json:"host,omitempty"`
-	Port        *int                   `yaml:"port,omitempty" json:"port,omitempty"`
+	Protocol string `yaml:"protocol,omitempty" json:"scheme,omitempty"`
+	Host     string `yaml:"host,omitempty" json:"host,omitempty"`
+	Port     *int   `yaml:"port,omitempty" json:"port,omitempty"`
+	// for database connection strings
+	URL         string                 `yaml:"url,omitempty" json:"url,omitempty"`
 	Secure      *bool                  `yaml:"secure,omitempty" json:"secure,omitempty"`
 	Disabled    bool                   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
@@ -50,6 +52,10 @@ func (e ListenEntry) FindInt(path string) int {
 }
 
 func (e ListenEntry) NetworkID() string {
+	// URL overrides Host+Port
+	if len(e.URL) != 0 {
+		return e.URL
+	}
 	p := 0
 	if e.Port != nil {
 		p = *e.Port
