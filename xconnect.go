@@ -71,7 +71,6 @@ type ConnectEntry struct {
 	Port        *int                   `yaml:"port,omitempty" json:"port,omitempty"`
 	URL         string                 `yaml:"url,omitempty" json:"url,omitempty"`
 	Disabled    bool                   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
-	Kind        string                 `yaml:"kind,omitempty" json:"kind,omitempty"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
 
@@ -139,6 +138,7 @@ type MetaConfig struct {
 	Opex        string                 `yaml:"opex,omitempty" json:"opex,omitempty"`
 	Labels      []string               `yaml:"tags,omitempty" json:"tags,omitempty"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
+	Kind        string                 `yaml:"kind,omitempty" json:"kind,omitempty"`
 }
 
 // FindString return a string for a given slash path.

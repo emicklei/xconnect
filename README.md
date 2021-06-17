@@ -136,6 +136,10 @@ To extract the xconnect section using the command line tool:
 
     xconnect -input configmap.yml -k8s -target file://xconnect-from-configmap.yml
 
+## view
+
+  xconnect -dot | dot -Tpng  > graph.png && open graph.png
+
 ## Getting the extra fields
 
 See xconnect_test.go
@@ -145,4 +149,4 @@ See xconnect_test.go
 - https://dzone.com/articles/cataloguing-microservices
 
 
-© 2019, [ernestmicklei.com](http://ernestmicklei.com). MIT License. Contributions welcome.
+© 2019+, [ernestmicklei.com](http://ernestmicklei.com). MIT License. Contributions welcome.

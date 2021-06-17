@@ -12,6 +12,10 @@ xconnect:
       - account
       - registration
       - search
+    # hint what kind of service this is for labelling
+    # e.g. memorystore, postgres, bigquery,...
+    kind: elastic
+
   # A listen entry is used to describe how consumers can connect to this service.
   # Fields that are not applicable can be ommitted.      
   listen:
@@ -47,7 +51,3 @@ xconnect:
       # if host and port is not applicable, the url can be used to specifiy a connection string.
       # then do not duplicate information into the scheme,tls,host or port fields.
       url: http://here.net:8080
-
-      # hint what kind of service this is for labelling
-      # e.g. memorystore, postgres, bigquery,...
-      kind: elastic
