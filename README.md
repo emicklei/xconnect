@@ -52,16 +52,18 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
           port: 443
       connect:
         some-db:
+          kind: db
           url: jdbc:postgresql://localhost:5432/postgres?reWriteBatchedInserts=true
         some-cache:
           host: #REDIS_IP
           port: 6379
+          kind: db
         variant-publish:
-          gcp.pubsub:
-            topic: VariantToAssortment_Push_v1-topic          
+          kind: gcp.pubsub
+          resource: VariantToAssortment_Push_v1-topic          
         variant-pull:
-          gcp.pubsub:
-            subscription: Variant_v1-subscription
+          kind: gcp.pubsub:
+          resource: subscription: Variant_v1-subscription
             test:
               topic: Variant_v1-topic
 

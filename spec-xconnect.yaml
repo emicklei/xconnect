@@ -13,8 +13,7 @@ xconnect:
       - registration
       - search
     # hint what kind of service this is for labelling
-    # e.g. memorystore, postgres, bigquery,...
-    kind: elastic
+    kind: grpc-service
 
   # A listen entry is used to describe how consumers can connect to this service.
   # Fields that are not applicable can be ommitted.      
@@ -29,11 +28,13 @@ xconnect:
       # one of [http2,http,grpc,tcp] not [https]
       protocol: http   
       secure: true
-
-      # you can add extra fieds and structures
-      gcp.pubsub:
-            # other services can publish to this topic
-            topic: account_topic
+  
+      kind: gcp.pubsub
+      # other services can publish to this topic
+      resource: account_topic
+      # you can add extra fields and structures
+      test:
+        topic: account_test_topic
 
   # A connect entry represents an external service that is used by this service to get information from or put information to it.
   # Fields that are not applicable can be ommitted.
@@ -51,3 +52,7 @@ xconnect:
       # if host and port is not applicable, the url can be used to specifiy a connection string.
       # then do not duplicate information into the scheme,tls,host or port fields.
       url: http://here.net:8080
+
+      # hint what kind of service is being used for labelling or diagram generation
+      # e.g. memorystore, postgres, bigquery,...
+      kind: elastic      

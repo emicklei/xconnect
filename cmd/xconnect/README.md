@@ -15,3 +15,7 @@
 ## generate DOT file
 
     xconnect -dot
+
+### custom meta attributes
+
+    ui-bgcolor: "#F5BDA2"

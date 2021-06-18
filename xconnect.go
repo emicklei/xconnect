@@ -65,12 +65,15 @@ func (e ListenEntry) NetworkID() string {
 
 // ConnectEntry is a list element in the xconnect.connect config.
 type ConnectEntry struct {
-	Protocol    string                 `yaml:"protocol,omitempty" json:"scheme,omitempty"`
-	Secure      *bool                  `yaml:"secure,omitempty" json:"secure,omitempty"`
-	Host        string                 `yaml:"host,omitempty" json:"host,omitempty"`
-	Port        *int                   `yaml:"port,omitempty" json:"port,omitempty"`
-	URL         string                 `yaml:"url,omitempty" json:"url,omitempty"`
-	Disabled    bool                   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
+	Protocol string `yaml:"protocol,omitempty" json:"scheme,omitempty"`
+	Secure   *bool  `yaml:"secure,omitempty" json:"secure,omitempty"`
+	Host     string `yaml:"host,omitempty" json:"host,omitempty"`
+	Port     *int   `yaml:"port,omitempty" json:"port,omitempty"`
+	URL      string `yaml:"url,omitempty" json:"url,omitempty"`
+	Disabled bool   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
+	Kind     string `yaml:"kind,omitempty" json:"kind,omitempty"`
+	// Resource is to identify the virtual listen part
+	Resource    string                 `yaml:"resource,omitempty" json:"resource,omitempty"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
 
@@ -94,16 +97,29 @@ func (e ConnectEntry) FindString(path string) string {
 	}
 }
 
+// ResourceID returns NetworkID() or KIND:RESOURCE
+func (e ConnectEntry) ResourceID() string {
+	if id := e.NetworkID(); id != "" {
+		return id
+	}
+	return fmt.Sprintf("%s:%s", e.Kind, e.Resource)
+}
+
+// NetworkID returns URL or HOST:PORT
 func (e ConnectEntry) NetworkID() string {
 	// URL overrides Host+Port
 	if len(e.URL) != 0 {
 		return e.URL
 	}
-	p := 0
-	if e.Port != nil {
-		p = *e.Port
+	if len(e.Host) != 0 {
+		p := 0
+		if e.Port != nil {
+			p = *e.Port
+		}
+		return fmt.Sprintf("%s:%d", e.Host, p)
 	}
-	return fmt.Sprintf("%s:%d", e.Host, p)
+	// url empty, host empty, we dont know
+	return ""
 }
 
 // FindInt returns an int for a given path (using slashes).

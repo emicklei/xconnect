@@ -69,11 +69,17 @@ func loadDocument(name string) (xconnect.Document, error) {
 func addToGraph(cfg xconnect.Config, g *dot.Graph) {
 	s := g.Subgraph(cfg.Meta.Name, dot.ClusterOption{})
 	s.Attr("style", "rounded")
-	// TODO read from config
-	//s.Attr("bgcolor", "#F5BDA2")
+	s.Attr("bgcolor", "#F5FDF2")
+	if bg, ok := cfg.Meta.ExtraFields["ui-bgcolor"]; ok {
+		s.Attr("bgcolor", bg)
+	}
 	for k, v := range cfg.Listen {
 		id := fmt.Sprintf("%s/%s", cfg.Meta.Name, k)
 		n := s.Node(id).Label(k)
+		n.Attr("fillcolor", "#FFFFFF").Attr("style", "filled")
+		if bg, ok := v.ExtraFields["ui-fillcolor"]; ok {
+			n.Attr("fillcolor", bg).Attr("style", "filled")
+		}
 		networkIDtoNode[v.NetworkID()] = n
 	}
 	for k := range cfg.Connect {
@@ -90,10 +96,18 @@ func connectInGraph(cfg xconnect.Config, g *dot.Graph) {
 		id := fmt.Sprintf("%s/%s", cfg.Meta.Name, k)
 		from := s.Node(id)
 		to, ok := networkIDtoNode[v.NetworkID()]
-		if ok {
-			from.Edge(to).Attr("arrowtail", "dot").Attr("dir", "both")
-		} else {
-			fmt.Fprintf(os.Stderr, "[xconnect] no config or listen entry found: %s\n", v.NetworkID())
+		if !ok {
+			// if kind is set then create a node to represent the other end
+			if v.Kind != "" {
+				id := v.ResourceID()
+				to = g.Node(id)
+				// remember
+				networkIDtoNode[id] = to
+			} else {
+				fmt.Fprintf(os.Stderr, "[xconnect] no listen entry found: %s\n", v.NetworkID())
+				continue
+			}
 		}
+		from.Edge(to).Attr("arrowtail", "dot").Attr("dir", "both")
 	}
 }
