@@ -26,6 +26,9 @@ func TestExtended(t *testing.T) {
 	if got, want := c.ExtraFields["any"], "other"; got != want {
 		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
 	}
+	if got, want := c.FindInt("int"), 2; got != want {
+		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
+	}
 	if got, want := c.FindString("any"), "other"; got != want {
 		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
 	}

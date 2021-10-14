@@ -147,13 +147,37 @@ type Config struct {
 	ExtraFields map[string]interface{}  `yaml:"-,inline"`
 }
 
-// FindString return a string for a given slash path.
+// FindString returns a string for a given slash path.
 func (c Config) FindString(path string) string {
 	keys := strings.Split(path, extraPathSeparator)
 	v := find(keys, c.ExtraFields)
 	if s, ok := v.(string); !ok {
 		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
 		return ""
+	} else {
+		return s
+	}
+}
+
+// FindBool returns a bool for a given slash path.
+func (c Config) FindBool(path string) bool {
+	keys := strings.Split(path, extraPathSeparator)
+	v := find(keys, c.ExtraFields)
+	if s, ok := v.(bool); !ok {
+		log.Printf("warn: xconnect, value is not a bool, but a %T for path %s\n", v, path)
+		return false
+	} else {
+		return s
+	}
+}
+
+// FindInt returns a integer for a given slash path.
+func (c Config) FindInt(path string) int {
+	keys := strings.Split(path, extraPathSeparator)
+	v := find(keys, c.ExtraFields)
+	if s, ok := v.(int); !ok {
+		log.Printf("warn: xconnect, value is not a int, but a %T for path %s\n", v, path)
+		return 0
 	} else {
 		return s
 	}

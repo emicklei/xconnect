@@ -1,6 +1,7 @@
 any: "value"
 xconnect:
   any: "other"
+  int: 2
   meta:
     extra0: extra0
     nested0:
