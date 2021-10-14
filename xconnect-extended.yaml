@@ -1,4 +1,6 @@
+any: "value"
 xconnect:
+  any: "other"
   meta:
     extra0: extra0
     nested0:

@@ -16,7 +16,19 @@ func TestExtended(t *testing.T) {
 	if err := yaml.Unmarshal(d, &doc); err != nil {
 		t.Fatal(err)
 	}
+	if got, want := doc.ExtraFields["any"], "value"; got != want {
+		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
+	}
+	if got, want := doc.FindString("any"), "value"; got != want {
+		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
+	}
 	c := doc.Config
+	if got, want := c.ExtraFields["any"], "other"; got != want {
+		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
+	}
+	if got, want := c.FindString("any"), "other"; got != want {
+		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
+	}
 	if got, want := c.Meta.FindString("extra0"), "extra0"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}

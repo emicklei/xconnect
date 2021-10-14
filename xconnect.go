@@ -141,9 +141,22 @@ func (e ConnectEntry) FindInt(path string) int {
 // Config represents the xconnect data section of a YAML document.
 // See spec-xconnect.yaml.
 type Config struct {
-	Meta    MetaConfig              `yaml:"meta" json:"meta"`
-	Listen  map[string]ListenEntry  `yaml:"listen" json:"listen"`
-	Connect map[string]ConnectEntry `yaml:"connect" json:"connect"`
+	Meta        MetaConfig              `yaml:"meta" json:"meta"`
+	Listen      map[string]ListenEntry  `yaml:"listen" json:"listen"`
+	Connect     map[string]ConnectEntry `yaml:"connect" json:"connect"`
+	ExtraFields map[string]interface{}  `yaml:"-,inline"`
+}
+
+// FindString return a string for a given slash path.
+func (c Config) FindString(path string) string {
+	keys := strings.Split(path, extraPathSeparator)
+	v := find(keys, c.ExtraFields)
+	if s, ok := v.(string); !ok {
+		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
+		return ""
+	} else {
+		return s
+	}
 }
 
 // MetaConfig represents the meta element in the xconnect data section.
@@ -175,5 +188,18 @@ func (m MetaConfig) FindString(path string) string {
 
 // Document is the root YAML element
 type Document struct {
-	Config Config `yaml:"xconnect"`
+	Config      Config                 `yaml:"xconnect"`
+	ExtraFields map[string]interface{} `yaml:"-,inline"`
+}
+
+// FindString return a string for a given slash path.
+func (d Document) FindString(path string) string {
+	keys := strings.Split(path, extraPathSeparator)
+	v := find(keys, d.ExtraFields)
+	if s, ok := v.(string); !ok {
+		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
+		return ""
+	} else {
+		return s
+	}
 }
