@@ -22,14 +22,14 @@ var networkIDtoNode = map[string]dot.Node{}
 // xconnect -dot | dot -Tpng  > graph.png && open graph.png
 
 func makeGraph() {
-	cfgs := []xconnect.Config{}
+	cfgs := []xconnect.XConnect{}
 	for _, each := range collectYAMLnames() {
 		d, err := loadDocument(each)
 		if err != nil {
 			log.Println(err)
 		}
 		//fmt.Println("loaded", d.Config.Meta.Name)
-		cfgs = append(cfgs, d.Config)
+		cfgs = append(cfgs, d.XConnect)
 	}
 	for _, each := range cfgs {
 		addToGraph(each, master)
@@ -66,7 +66,7 @@ func loadDocument(name string) (xconnect.Document, error) {
 	return d, nil
 }
 
-func addToGraph(cfg xconnect.Config, g *dot.Graph) {
+func addToGraph(cfg xconnect.XConnect, g *dot.Graph) {
 	s := g.Subgraph(cfg.Meta.Name, dot.ClusterOption{})
 	s.Attr("style", "rounded")
 	s.Attr("bgcolor", "#F5FDF2")
@@ -90,7 +90,7 @@ func addToGraph(cfg xconnect.Config, g *dot.Graph) {
 
 }
 
-func connectInGraph(cfg xconnect.Config, g *dot.Graph) {
+func connectInGraph(cfg xconnect.XConnect, g *dot.Graph) {
 	s, _ := g.FindSubgraph(cfg.Meta.Name)
 	for k, v := range cfg.Connect {
 		id := fmt.Sprintf("%s/%s", cfg.Meta.Name, k)

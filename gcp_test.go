@@ -18,7 +18,7 @@ xconnect:
 	if err := yaml.Unmarshal([]byte(cfg), &doc); err != nil {
 		t.Fatal(err)
 	}
-	x := doc.Config
+	x := doc.XConnect
 	if got, want := x.Connect["accounts"].FindString("gcp.datastore/kind"), "Account"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}

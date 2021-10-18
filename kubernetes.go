@@ -35,7 +35,7 @@ type K8SConfiguration struct {
 }
 
 // ExtractConfig expects a "xconnect" key in the data map and parses that part into a xconnect.Config.
-func (k K8SConfiguration) ExtractConfig() (x Config, err error) {
+func (k K8SConfiguration) ExtractConfig() (x XConnect, err error) {
 	appYaml, ok := k.Data["application.yml"]
 	if !ok {
 		return x, errors.New("missing key: [application.yml]")

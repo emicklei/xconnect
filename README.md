@@ -28,7 +28,11 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
 
 ## Example
 
+    doc-field: doc-value
+
     xconnect:
+      extra-field: extra-value
+      
       meta:
         # name for discovery
         name: account-service

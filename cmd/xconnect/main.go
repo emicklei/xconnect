@@ -38,7 +38,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	var cfg xconnect.Config
+	var cfg xconnect.XConnect
 	if *oK8S { // get xconnect section from k8s configuration
 		extracted, err := readK8S(content)
 		if err != nil {
@@ -54,7 +54,7 @@ func main() {
 	}
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
-	if err := enc.Encode(xconnect.Document{Config: cfg}); err != nil {
+	if err := enc.Encode(xconnect.Document{XConnect: cfg}); err != nil {
 		log.Fatal("unable to marshal into JSON", err)
 	}
 	if strings.HasPrefix(*oTarget, "http") {
@@ -80,16 +80,16 @@ func main() {
 	log.Println("[xconnect] OK")
 }
 
-func readXConnectDocument(content []byte) (cfg xconnect.Config, err error) {
+func readXConnectDocument(content []byte) (cfg xconnect.XConnect, err error) {
 	log.Println("[xconnect] parse xconnect configuration", *oInput)
 	var d xconnect.Document
 	if err = yaml.Unmarshal(content, &d); err != nil {
 		return
 	}
-	return d.Config, nil
+	return d.XConnect, nil
 }
 
-func readK8S(content []byte) (cfg xconnect.Config, err error) {
+func readK8S(content []byte) (cfg xconnect.XConnect, err error) {
 	log.Println("PARSE Kubernetes (k8s) Configuration", *oInput)
 	var k xconnect.K8SConfiguration
 	if err = yaml.Unmarshal(content, &k); err != nil {

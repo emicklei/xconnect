@@ -2,8 +2,11 @@ package xconnect
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
 
 // ListenEntry is a list element in the xconnect.accept config.
@@ -138,17 +141,17 @@ func (e ConnectEntry) FindInt(path string) int {
 	}
 }
 
-// Config represents the xconnect data section of a YAML document.
+// XConnect represents the xconnect data section of a YAML document.
 // See spec-xconnect.yaml.
-type Config struct {
-	Meta        MetaConfig              `yaml:"meta" json:"meta"`
+type XConnect struct {
+	Meta        MetaProperties          `yaml:"meta" json:"meta"`
 	Listen      map[string]ListenEntry  `yaml:"listen" json:"listen"`
 	Connect     map[string]ConnectEntry `yaml:"connect" json:"connect"`
 	ExtraFields map[string]interface{}  `yaml:"-,inline"`
 }
 
 // FindString returns a string for a given slash path.
-func (c Config) FindString(path string) string {
+func (c XConnect) FindString(path string) string {
 	keys := strings.Split(path, extraPathSeparator)
 	v := find(keys, c.ExtraFields)
 	if s, ok := v.(string); !ok {
@@ -160,7 +163,7 @@ func (c Config) FindString(path string) string {
 }
 
 // FindBool returns a bool for a given slash path.
-func (c Config) FindBool(path string) bool {
+func (c XConnect) FindBool(path string) bool {
 	keys := strings.Split(path, extraPathSeparator)
 	v := find(keys, c.ExtraFields)
 	if s, ok := v.(bool); !ok {
@@ -172,7 +175,7 @@ func (c Config) FindBool(path string) bool {
 }
 
 // FindInt returns a integer for a given slash path.
-func (c Config) FindInt(path string) int {
+func (c XConnect) FindInt(path string) int {
 	keys := strings.Split(path, extraPathSeparator)
 	v := find(keys, c.ExtraFields)
 	if s, ok := v.(int); !ok {
@@ -183,8 +186,8 @@ func (c Config) FindInt(path string) int {
 	}
 }
 
-// MetaConfig represents the meta element in the xconnect data section.
-type MetaConfig struct {
+// MetaProperties represents the meta element in the xconnect data section.
+type MetaProperties struct {
 	Name    string `yaml:"name,omitempty" json:"name,omitempty"`
 	Version string `yaml:"version,omitempty" json:"version,omitempty"`
 	// Operational expenditure, or owner
@@ -195,7 +198,7 @@ type MetaConfig struct {
 }
 
 // FindString return a string for a given slash path.
-func (m MetaConfig) FindString(path string) string {
+func (m MetaProperties) FindString(path string) string {
 	keys := strings.Split(path, extraPathSeparator)
 	withFixed := copy(m.ExtraFields)
 	withFixed["name"] = m.Name
@@ -212,7 +215,7 @@ func (m MetaConfig) FindString(path string) string {
 
 // Document is the root YAML element
 type Document struct {
-	Config      Config                 `yaml:"xconnect"`
+	XConnect    XConnect               `yaml:"xconnect"`
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
 
@@ -226,4 +229,17 @@ func (d Document) FindString(path string) string {
 	} else {
 		return s
 	}
+}
+
+func LoadConfig(filename string) (Document, error) {
+	content, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return Document{}, fmt.Errorf("unable to read:%v", err)
+	}
+	var doc Document
+	err = yaml.Unmarshal(content, &doc)
+	if err != nil {
+		return Document{}, fmt.Errorf("unable to unmarshal YAML:%v", err)
+	}
+	return doc, nil
 }

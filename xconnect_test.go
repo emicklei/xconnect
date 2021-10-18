@@ -22,7 +22,7 @@ func TestExtended(t *testing.T) {
 	if got, want := doc.FindString("any"), "value"; got != want {
 		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
 	}
-	c := doc.Config
+	c := doc.XConnect
 	if got, want := c.ExtraFields["any"], "other"; got != want {
 		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
 	}
@@ -67,7 +67,7 @@ func TestSpec(t *testing.T) {
 	if err := yaml.Unmarshal(d, &doc); err != nil {
 		t.Fatal(err)
 	}
-	x := doc.Config
+	x := doc.XConnect
 	if got, want := len(x.Listen), 1; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
@@ -91,7 +91,7 @@ func TestSpec(t *testing.T) {
 }
 
 func TestDumpSpec(t *testing.T) {
-	x := Config{}
+	x := XConnect{}
 	x.Listen = map[string]ListenEntry{
 		"api": {Protocol: "grpc"},
 	}
@@ -103,4 +103,11 @@ func TestDumpSpec(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(string(data))
+}
+
+func TestLoadConfig(t *testing.T) {
+	_, err := LoadConfig("spec-xconnect.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
 }
