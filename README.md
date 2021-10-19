@@ -82,15 +82,14 @@ This example uses *gopkg.in/yaml.v2* for parsing the configuration.
     content, err := ioutil.ReadFile("your-app.yaml")
     var doc xconnect.Document
     err := yaml.Unmarshal(content, &doc)
-    cfg := doc.Config
 
-    version := cfg.Meta.Version
-    // alternative: cfg.Meta.FindString("version")
+    version := doc.XConnect.Meta.Version
+    // alternative: doc.FindString("xconnect/meta/version")
     
-    webPort := cfg.Listen["web"].Port
-    // alternative: cfg.Listen["web"].FindInt("port")
+    webPort := doc.Xconnect.Listen["web"].Port
+    // alternative: doc.FindInt("xconnect/listen/web/port")
     
-    variantPullTestTopic := cfg.Connect["variant-pull"].FindString("gcp.pubsub/test/topic")
+    variantPullTestTopic := doc.FindString("xconnect/connect/variant-pull/resource/test/topic")
 
 ## Sprint Boot application configration
 
