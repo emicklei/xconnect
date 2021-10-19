@@ -22,38 +22,34 @@ func TestExtended(t *testing.T) {
 	if got, want := doc.FindString("any"), "value"; got != want {
 		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
 	}
-	c := doc.XConnect
-	if got, want := c.ExtraFields["any"], "other"; got != want {
+	if got, want := doc.FindInt("xconnect/int"), 2; got != want {
 		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
 	}
-	if got, want := c.FindInt("int"), 2; got != want {
+	if got, want := doc.FindString("xconnect/any"), "other"; got != want {
 		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
 	}
-	if got, want := c.FindString("any"), "other"; got != want {
-		t.Errorf("got [%v:%T] want [%v:%T]", got, got, want, want)
-	}
-	if got, want := c.Meta.FindString("extra0"), "extra0"; got != want {
+	if got, want := doc.FindString("xconnect/meta/extra0"), "extra0"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Meta.FindString("nested0/sub0"), "sub0"; got != want {
+	if got, want := doc.FindString("xconnect/meta/nested0/sub0"), "sub0"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Listen["id1"].FindString("extra1"), "extra1"; got != want {
+	if got, want := doc.FindString("xconnect/listen/id1/extra1"), "extra1"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Listen["id1"].FindString("nested1/sub1"), "sub1"; got != want {
+	if got, want := doc.FindString("xconnect/listen/id1/nested1/sub1"), "sub1"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Connect["id2"].FindString("extra2"), "extra2"; got != want {
+	if got, want := doc.FindString("xconnect/connect/id2/extra2"), "extra2"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Connect["id2"].FindString("nested2/sub2"), "sub2"; got != want {
+	if got, want := doc.FindString("xconnect/connect/id2/nested2/sub2"), "sub2"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Connect["id2"].FindString("host"), "notextra"; got != want {
+	if got, want := doc.FindString("xconnect/connect/id2/host"), "notextra"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
-	if got, want := c.Connect["id2"].FindInt("port"), -1; got != want {
+	if got, want := doc.FindInt("xconnect/connect/id2/port"), -1; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
 }

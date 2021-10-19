@@ -23,34 +23,25 @@ type ListenEntry struct {
 
 const extraPathSeparator = "/"
 
-// FindString return a string for a given path (using slashes).
-func (e ListenEntry) FindString(path string) string {
-	keys := strings.Split(path, extraPathSeparator)
-	withFixed := copy(e.ExtraFields)
-	withFixed["protocol"] = e.Protocol
-	withFixed["host"] = e.Host
-	v := find(keys, withFixed)
-	if s, ok := v.(string); !ok {
-		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
-		return ""
-	} else {
-		return s
+func (e ListenEntry) find(keys []string) (interface{}, bool) {
+	if len(keys) == 0 {
+		return nil, false
 	}
-}
-
-// FindInt returns an int for a given path (using slashes).
-func (e ListenEntry) FindInt(path string) int {
-	keys := strings.Split(path, extraPathSeparator)
-	withFixed := copy(e.ExtraFields)
-	if e.Port != nil {
-		withFixed["port"] = *e.Port
-	}
-	v := find(keys, withFixed)
-	if i, ok := v.(int); !ok {
-		log.Printf("warn: xconnect, value is not a int, but a %T for path %s\n", v, path)
-		return 0
-	} else {
-		return i
+	switch keys[0] {
+	case "protocol":
+		return e.Protocol, true
+	case "secure":
+		return e.Secure, true
+	case "host":
+		return e.Host, true
+	case "port":
+		return e.Port, true
+	case "url":
+		return e.URL, true
+	case "disabled":
+		return e.Disabled, true
+	default:
+		return findInMap(keys, e.ExtraFields)
 	}
 }
 
@@ -84,22 +75,6 @@ type ConnectionEnd interface {
 	NetworkID() string
 }
 
-// FindString return a string for a give dotted path.
-func (e ConnectEntry) FindString(path string) string {
-	keys := strings.Split(path, extraPathSeparator)
-	withFixed := copy(e.ExtraFields)
-	withFixed["protocol"] = e.Protocol
-	withFixed["host"] = e.Host
-	withFixed["url"] = e.URL
-	v := find(keys, withFixed)
-	if s, ok := v.(string); !ok {
-		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
-		return ""
-	} else {
-		return s
-	}
-}
-
 // ResourceID returns NetworkID() or KIND:RESOURCE
 func (e ConnectEntry) ResourceID() string {
 	if id := e.NetworkID(); id != "" {
@@ -125,19 +100,35 @@ func (e ConnectEntry) NetworkID() string {
 	return ""
 }
 
-// FindInt returns an int for a given path (using slashes).
-func (e ConnectEntry) FindInt(path string) int {
-	keys := strings.Split(path, extraPathSeparator)
-	withFixed := copy(e.ExtraFields)
-	if e.Port != nil {
-		withFixed["port"] = *e.Port
+func (e ConnectEntry) find(keys []string) (interface{}, bool) {
+	if len(keys) == 0 {
+		return nil, false
 	}
-	v := find(keys, withFixed)
-	if i, ok := v.(int); !ok {
-		log.Printf("warn: xconnect, value is not a int, but a %T for path %s\n", v, path)
-		return 0
-	} else {
-		return i
+	switch keys[0] {
+	case "protocol":
+		return e.Protocol, true
+	case "secure":
+		if e.Secure != nil {
+			return *e.Secure, true
+		}
+		return nil, false
+	case "host":
+		return e.Host, true
+	case "port":
+		if e.Port != nil {
+			return *e.Port, true
+		}
+		return nil, false
+	case "url":
+		return e.URL, true
+	case "disabled":
+		return e.Disabled, true
+	case "kind":
+		return e.Kind, true
+	case "resource":
+		return e.Resource, true
+	default:
+		return findInMap(keys, e.ExtraFields)
 	}
 }
 
@@ -150,40 +141,43 @@ type XConnect struct {
 	ExtraFields map[string]interface{}  `yaml:"-,inline"`
 }
 
-// FindString returns a string for a given slash path.
-func (c XConnect) FindString(path string) string {
-	keys := strings.Split(path, extraPathSeparator)
-	v := find(keys, c.ExtraFields)
-	if s, ok := v.(string); !ok {
-		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
-		return ""
-	} else {
-		return s
+func (x XConnect) find(keys []string) (interface{}, bool) {
+	if len(keys) == 0 {
+		return nil, false
 	}
-}
-
-// FindBool returns a bool for a given slash path.
-func (c XConnect) FindBool(path string) bool {
-	keys := strings.Split(path, extraPathSeparator)
-	v := find(keys, c.ExtraFields)
-	if s, ok := v.(bool); !ok {
-		log.Printf("warn: xconnect, value is not a bool, but a %T for path %s\n", v, path)
-		return false
-	} else {
-		return s
+	switch keys[0] {
+	case "meta":
+		return x.Meta.find(keys[1:])
+	case "listen":
+		subkeys := keys[1:]
+		if len(subkeys) == 0 {
+			return nil, false
+		}
+		for k, each := range x.Listen {
+			if subkeys[0] == k {
+				if v, ok := each.find(subkeys[1:]); ok {
+					return v, ok
+				}
+			}
+		}
+		return nil, false
+	case "connect":
+		subkeys := keys[1:]
+		if len(subkeys) == 0 {
+			return nil, false
+		}
+		for k, each := range x.Connect {
+			if subkeys[0] == k {
+				if v, ok := each.find(subkeys[1:]); ok {
+					return v, ok
+				}
+			}
+		}
+		return nil, false
+	default:
+		return findInMap(keys, x.ExtraFields)
 	}
-}
-
-// FindInt returns a integer for a given slash path.
-func (c XConnect) FindInt(path string) int {
-	keys := strings.Split(path, extraPathSeparator)
-	v := find(keys, c.ExtraFields)
-	if s, ok := v.(int); !ok {
-		log.Printf("warn: xconnect, value is not a int, but a %T for path %s\n", v, path)
-		return 0
-	} else {
-		return s
-	}
+	return nil, false
 }
 
 // MetaProperties represents the meta element in the xconnect data section.
@@ -197,19 +191,21 @@ type MetaProperties struct {
 	Kind        string                 `yaml:"kind,omitempty" json:"kind,omitempty"`
 }
 
-// FindString return a string for a given slash path.
-func (m MetaProperties) FindString(path string) string {
-	keys := strings.Split(path, extraPathSeparator)
-	withFixed := copy(m.ExtraFields)
-	withFixed["name"] = m.Name
-	withFixed["version"] = m.Version
-	withFixed["opex"] = m.Opex
-	v := find(keys, withFixed)
-	if s, ok := v.(string); !ok {
-		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
-		return ""
-	} else {
-		return s
+func (m MetaProperties) find(keys []string) (interface{}, bool) {
+	if len(keys) == 0 {
+		return nil, false
+	}
+	switch keys[0] {
+	case "name":
+		return m.Name, true
+	case "version":
+		return m.Version, true
+	case "opex":
+		return m.Opex, true
+	case "kind":
+		return m.Kind, true
+	default:
+		return findInMap(keys, m.ExtraFields)
 	}
 }
 
@@ -222,7 +218,10 @@ type Document struct {
 // FindString return a string for a given slash path.
 func (d Document) FindString(path string) string {
 	keys := strings.Split(path, extraPathSeparator)
-	v := find(keys, d.ExtraFields)
+	v, ok := d.find(keys)
+	if !ok {
+		return ""
+	}
 	if s, ok := v.(string); !ok {
 		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
 		return ""
@@ -231,6 +230,49 @@ func (d Document) FindString(path string) string {
 	}
 }
 
+// FindBool returns a bool for a given slash path.
+func (d Document) FindBool(path string) bool {
+	keys := strings.Split(path, extraPathSeparator)
+	v, ok := d.find(keys)
+	if !ok {
+		return false
+	}
+	if s, ok := v.(bool); !ok {
+		log.Printf("warn: xconnect, value is not a bool, but a %T for path %s\n", v, path)
+		return false
+	} else {
+		return s
+	}
+}
+
+// FindInt returns a integer for a given slash path.
+func (d Document) FindInt(path string) int {
+	keys := strings.Split(path, extraPathSeparator)
+	v, ok := d.find(keys)
+	if !ok {
+		return 0
+	}
+	if s, ok := v.(int); !ok {
+		log.Printf("warn: xconnect, value is not a int, but a %T for path %s\n", v, path)
+		return 0
+	} else {
+		return s
+	}
+}
+
+func (d Document) find(keys []string) (interface{}, bool) {
+	if len(keys) == 0 {
+		return nil, false
+	}
+	switch keys[0] {
+	case "xconnect":
+		return d.XConnect.find(keys[1:])
+	default:
+		return findInMap(keys, d.ExtraFields)
+	}
+}
+
+// LoadConfig returns the document containing the xconnect section.
 func LoadConfig(filename string) (Document, error) {
 	content, err := ioutil.ReadFile(filename)
 	if err != nil {

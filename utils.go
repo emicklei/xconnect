@@ -2,33 +2,33 @@ package xconnect
 
 import "log"
 
-func find(path []string, tree map[string]interface{}) interface{} {
+func findInMap(path []string, tree map[string]interface{}) (interface{}, bool) {
 	if len(tree) == 0 {
 		log.Println("warn: xconnect, empty extra fields")
-		return ""
+		return nil, false
 	}
 	if len(path) == 0 {
-		log.Println("warn: xconnect, empty key", path[0])
-		return ""
+		log.Println("warn: xconnect, empty key")
+		return nil, false
 	}
 	if len(path) == 1 {
 		f, ok := tree[path[0]]
 		if !ok {
 			log.Println("warn: xconnect, no such key", path[0])
-			return ""
+			return nil, false
 		}
-		return f
+		return f, true
 	}
 	// > 1
 	f, ok := tree[path[0]]
 	if !ok {
 		log.Println("warn: xconnect, no such key", path[0])
-		return ""
+		return nil, false
 	}
 	mi, ok := f.(map[interface{}]interface{})
 	if !ok {
 		log.Printf("warn: xconnect, value is not a map, but a %T for key %s\n", f, path[0])
-		return ""
+		return nil, false
 	}
 	// do the copy
 	m := map[string]interface{}{}
@@ -40,7 +40,7 @@ func find(path []string, tree map[string]interface{}) interface{} {
 			m[sk] = v
 		}
 	}
-	return find(path[1:], m)
+	return findInMap(path[1:], m)
 }
 
 func copy(src map[string]interface{}) map[string]interface{} {
