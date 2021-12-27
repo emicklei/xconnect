@@ -30,11 +30,17 @@ func (e ListenEntry) find(keys []string) (interface{}, bool) {
 	case "protocol":
 		return e.Protocol, true
 	case "secure":
-		return e.Secure, true
+		if e.Secure != nil {
+			return *e.Secure, true
+		}
+		return nil, false
 	case "host":
 		return e.Host, true
 	case "port":
-		return e.Port, true
+		if e.Port != nil {
+			return *e.Port, true
+		}
+		return nil, false
 	case "url":
 		return e.URL, true
 	case "disabled":
