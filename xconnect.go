@@ -3,7 +3,6 @@ package xconnect
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -177,7 +176,6 @@ func (x XConnect) find(keys []string) (interface{}, bool) {
 	default:
 		return findInMap(keys, x.ExtraFields)
 	}
-	return nil, false
 }
 
 // MetaProperties represents the meta element in the xconnect data section.
@@ -215,48 +213,45 @@ type Document struct {
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
 
-// FindString return a string for a given slash path.
-func (d Document) FindString(path string) string {
+// FindString returns a string for a given slash path, e.g xconnect/connect/db/url .
+func (d Document) FindString(path string) (string, error) {
 	keys := strings.Split(path, extraPathSeparator)
 	v, ok := d.find(keys)
 	if !ok {
-		return ""
+		return "", fmt.Errorf("unable to find string at [%s]", path)
 	}
 	if s, ok := v.(string); !ok {
-		log.Printf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
-		return ""
+		return "", fmt.Errorf("warn: xconnect, value is not a string, but a %T for path %s\n", v, path)
 	} else {
-		return s
+		return s, nil
 	}
 }
 
-// FindBool returns a bool for a given slash path.
-func (d Document) FindBool(path string) bool {
+// FindBool returns a bool for a given slash path, e.g xconnect/listen/api/secure .
+func (d Document) FindBool(path string) (bool, error) {
 	keys := strings.Split(path, extraPathSeparator)
 	v, ok := d.find(keys)
 	if !ok {
-		return false
+		return false, fmt.Errorf("unable to find bool at [%s]", path)
 	}
 	if s, ok := v.(bool); !ok {
-		log.Printf("warn: xconnect, value is not a bool, but a %T for path %s\n", v, path)
-		return false
+		return false, fmt.Errorf("warn: xconnect, value is not a bool, but a %T for path %s\n", v, path)
 	} else {
-		return s
+		return s, nil
 	}
 }
 
-// FindInt returns a integer for a given slash path.
-func (d Document) FindInt(path string) int {
+// FindInt returns a integer for a given slash path, e.g xconnect/listen/api/port .
+func (d Document) FindInt(path string) (int, error) {
 	keys := strings.Split(path, extraPathSeparator)
 	v, ok := d.find(keys)
 	if !ok {
-		return 0
+		return 0, fmt.Errorf("unable to find int at [%s]", path)
 	}
 	if s, ok := v.(int); !ok {
-		log.Printf("warn: xconnect, value is not a int, but a %T for path %s\n", v, path)
-		return 0
+		return 0, fmt.Errorf("warn: xconnect, value is not a int, but a %T for path %s\n", v, path)
 	} else {
-		return s
+		return s, nil
 	}
 }
 

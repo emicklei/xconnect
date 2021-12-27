@@ -31,13 +31,15 @@ func TestKubernetesSome(t *testing.T) {
 	if got, want := len(x.Connect["variant-publish"].ExtraFields), 1; got != want {
 		t.Fatalf("got [%d] extra fields want [%d]", got, want)
 	}
-	if got, want := doc.FindString("xconnect/variant-publish/gcp.pubsub/topic"), "VariantToAssortment_Push_v1-topic"; got != want {
+	v, _ := doc.FindString("xconnect/variant-publish/gcp.pubsub/topic")
+	if got, want := v, "VariantToAssortment_Push_v1-topic"; got != want {
 		t.Errorf("got [%s] want [%s]", got, want)
 	}
 	if got, want := len(x.Connect["variant-pull"].ExtraFields), 1; got != want {
 		t.Fatalf("got [%d] extra fields want [%d]", got, want)
 	}
-	if got, want := doc.FindString("xconnect/variant-pull/gcp.pubsub/subscription"), "Variant_v1-subscription"; got != want {
+	v, _ = doc.FindString("xconnect/variant-pull/gcp.pubsub/subscription")
+	if got, want := v, "Variant_v1-subscription"; got != want {
 		t.Errorf("got [%s] want [%s]", got, want)
 	}
 }
