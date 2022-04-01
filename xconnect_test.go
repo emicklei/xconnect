@@ -59,8 +59,18 @@ func TestExtended(t *testing.T) {
 	if got, want := s, "notextra"; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
+	_, err = doc.FindString("xconnect/connect/id2/notfound")
+	if got, want := err != nil, true; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	t.Log(err)
 	i, _ = doc.FindInt("xconnect/connect/id2/port")
 	if got, want := i, -1; got != want {
+		t.Errorf("got [%v] want [%v]", got, want)
+	}
+	_, err = doc.FindInt("xconnect/connect/id3/notfound")
+	t.Log(err)
+	if got, want := err != nil, true; got != want {
 		t.Errorf("got [%v] want [%v]", got, want)
 	}
 }
