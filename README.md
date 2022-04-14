@@ -78,11 +78,7 @@ The actual format of the xconnect data is free-form YAML, meaning that users are
     "github.com/emicklei/xconnect"
   )
 
-This example uses *gopkg.in/yaml.v2* for parsing the configuration.
-
-    content, err := ioutil.ReadFile("your-app.yaml")
-    var doc xconnect.Document
-    err := yaml.Unmarshal(content, &doc)
+    doc, err := GetConfig("ENV_VAR", "config.yaml") // env or file
 
     version := doc.XConnect.Meta.Version
     // alternative: doc.FindString("xconnect/meta/version")
