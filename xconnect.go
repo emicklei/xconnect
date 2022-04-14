@@ -3,6 +3,7 @@ package xconnect
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -271,6 +272,21 @@ func (d Document) find(keys []string) (interface{}, bool) {
 	default:
 		return findInMap(keys, d.ExtraFields)
 	}
+}
+
+// GetConfig will first check the environment value at {envKey} to find the source of the confguration.
+// If the environment value is not available (empty) then try reading the filename to get the configuration.
+func GetConfig(envKey string, filename string) (Document, error) {
+	content := os.Getenv(envKey)
+	if len(content) == 0 {
+		return LoadConfig(filename)
+	}
+	var doc Document
+	err := yaml.Unmarshal([]byte(content), &doc)
+	if err != nil {
+		return Document{}, fmt.Errorf("unable to unmarshal YAML:%v", err)
+	}
+	return doc, nil
 }
 
 // LoadConfig returns the document containing the xconnect section.
