@@ -220,6 +220,15 @@ type Document struct {
 	ExtraFields map[string]interface{} `yaml:"-,inline"`
 }
 
+// MustString same as FindString but panics if not found. E.g xconnect/connect/db/url .
+func (d Document) MustString(path string) string {
+	if v, err := d.FindString(path); err != nil {
+		panic(err)
+	} else {
+		return v
+	}
+}
+
 // FindString returns a string for a given slash path, e.g xconnect/connect/db/url .
 func (d Document) FindString(path string) (string, error) {
 	keys := strings.Split(path, extraPathSeparator)
@@ -234,6 +243,15 @@ func (d Document) FindString(path string) (string, error) {
 	}
 }
 
+// MustBool same as FindBool but panics if not found. E.g xconnect/listen/api/secure
+func (d Document) MustBool(path string) bool {
+	if v, err := d.FindBool(path); err != nil {
+		panic(err)
+	} else {
+		return v
+	}
+}
+
 // FindBool returns a bool for a given slash path, e.g xconnect/listen/api/secure .
 func (d Document) FindBool(path string) (bool, error) {
 	keys := strings.Split(path, extraPathSeparator)
@@ -245,6 +263,15 @@ func (d Document) FindBool(path string) (bool, error) {
 		return false, fmt.Errorf("warn: xconnect, value is not a bool, but a %T for path %s\n", v, path)
 	} else {
 		return s, nil
+	}
+}
+
+// MustInt same as FindInt but panics if not found. E.g xconnect/listen/api/port
+func (d Document) MustInt(path string) int {
+	if v, err := d.FindInt(path); err != nil {
+		panic(err)
+	} else {
+		return v
 	}
 }
 
