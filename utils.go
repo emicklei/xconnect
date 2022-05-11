@@ -1,5 +1,9 @@
 package xconnect
 
+type finder interface {
+	find(keys []string) (interface{}, bool)
+}
+
 func findInMap(path []string, tree map[string]interface{}) (interface{}, bool) {
 	if len(tree) == 0 {
 		return nil, false

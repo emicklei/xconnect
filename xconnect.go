@@ -9,134 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// ListenEntry is a list element in the xconnect.accept config.
-type ListenEntry struct {
-	Protocol string `yaml:"protocol,omitempty" json:"scheme,omitempty"`
-	Host     string `yaml:"host,omitempty" json:"host,omitempty"`
-	Port     *int   `yaml:"port,omitempty" json:"port,omitempty"`
-	// for database connection strings
-	URL         string                 `yaml:"url,omitempty" json:"url,omitempty"`
-	Secure      *bool                  `yaml:"secure,omitempty" json:"secure,omitempty"`
-	Disabled    bool                   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
-	ExtraFields map[string]interface{} `yaml:"-,inline"`
-}
-
 const extraPathSeparator = "/"
-
-func (e ListenEntry) find(keys []string) (interface{}, bool) {
-	if len(keys) == 0 {
-		return nil, false
-	}
-	switch keys[0] {
-	case "protocol":
-		return e.Protocol, true
-	case "secure":
-		if e.Secure != nil {
-			return *e.Secure, true
-		}
-		return nil, false
-	case "host":
-		return e.Host, true
-	case "port":
-		if e.Port != nil {
-			return *e.Port, true
-		}
-		return nil, false
-	case "url":
-		return e.URL, true
-	case "disabled":
-		return e.Disabled, true
-	default:
-		return findInMap(keys, e.ExtraFields)
-	}
-}
-
-func (e ListenEntry) NetworkID() string {
-	// URL overrides Host+Port
-	if len(e.URL) != 0 {
-		return e.URL
-	}
-	p := 0
-	if e.Port != nil {
-		p = *e.Port
-	}
-	return fmt.Sprintf("%s:%d", e.Host, p)
-}
-
-// ConnectEntry is a list element in the xconnect.connect config.
-type ConnectEntry struct {
-	Protocol string `yaml:"protocol,omitempty" json:"scheme,omitempty"`
-	Secure   *bool  `yaml:"secure,omitempty" json:"secure,omitempty"`
-	Host     string `yaml:"host,omitempty" json:"host,omitempty"`
-	Port     *int   `yaml:"port,omitempty" json:"port,omitempty"`
-	URL      string `yaml:"url,omitempty" json:"url,omitempty"`
-	Disabled bool   `yaml:"disabled,omitempty" json:"disabled,omitempty"`
-	Kind     string `yaml:"kind,omitempty" json:"kind,omitempty"`
-	// Resource is to identify the virtual listen part
-	Resource    string                 `yaml:"resource,omitempty" json:"resource,omitempty"`
-	ExtraFields map[string]interface{} `yaml:"-,inline"`
-}
-
-type ConnectionEnd interface {
-	NetworkID() string
-}
-
-// ResourceID returns NetworkID() or KIND:RESOURCE
-func (e ConnectEntry) ResourceID() string {
-	if id := e.NetworkID(); id != "" {
-		return id
-	}
-	return fmt.Sprintf("%s:%s", e.Kind, e.Resource)
-}
-
-// NetworkID returns URL or HOST:PORT
-func (e ConnectEntry) NetworkID() string {
-	// URL overrides Host+Port
-	if len(e.URL) != 0 {
-		return e.URL
-	}
-	if len(e.Host) != 0 {
-		p := 0
-		if e.Port != nil {
-			p = *e.Port
-		}
-		return fmt.Sprintf("%s:%d", e.Host, p)
-	}
-	// url empty, host empty, we dont know
-	return ""
-}
-
-func (e ConnectEntry) find(keys []string) (interface{}, bool) {
-	if len(keys) == 0 {
-		return nil, false
-	}
-	switch keys[0] {
-	case "protocol":
-		return e.Protocol, true
-	case "secure":
-		if e.Secure != nil {
-			return *e.Secure, true
-		}
-		return nil, false
-	case "host":
-		return e.Host, true
-	case "port":
-		if e.Port != nil {
-			return *e.Port, true
-		}
-		return nil, false
-	case "url":
-		return e.URL, true
-	case "disabled":
-		return e.Disabled, true
-	case "kind":
-		return e.Kind, true
-	case "resource":
-		return e.Resource, true
-	default:
-		return findInMap(keys, e.ExtraFields)
-	}
-}
 
 // XConnect represents the xconnect data section of a YAML document.
 // See spec-xconnect.yaml.
@@ -231,8 +104,13 @@ func (d Document) MustString(path string) string {
 
 // FindString returns a string for a given slash path, e.g xconnect/connect/db/url .
 func (d Document) FindString(path string) (string, error) {
+	return FindString(d, path)
+}
+
+// FindString returns a string for a given slash path, e.g xconnect/connect/db/url .
+func FindString(f finder, path string) (string, error) {
 	keys := strings.Split(path, extraPathSeparator)
-	v, ok := d.find(keys)
+	v, ok := f.find(keys)
 	if !ok {
 		return "", fmt.Errorf("unable to find string at [%s]", path)
 	}
@@ -252,10 +130,14 @@ func (d Document) MustBool(path string) bool {
 	}
 }
 
-// FindBool returns a bool for a given slash path, e.g xconnect/listen/api/secure .
+// FindBool returns a bool for a given slash path.
 func (d Document) FindBool(path string) (bool, error) {
+	return FindBool(d, path)
+}
+
+func FindBool(f finder, path string) (bool, error) {
 	keys := strings.Split(path, extraPathSeparator)
-	v, ok := d.find(keys)
+	v, ok := f.find(keys)
 	if !ok {
 		return false, fmt.Errorf("unable to find bool at [%s]", path)
 	}
@@ -277,8 +159,13 @@ func (d Document) MustInt(path string) int {
 
 // FindInt returns a integer for a given slash path, e.g xconnect/listen/api/port .
 func (d Document) FindInt(path string) (int, error) {
+	return FindInt(d, path)
+}
+
+// FindInt returns a integer for a given slash path.
+func FindInt(f finder, path string) (int, error) {
 	keys := strings.Split(path, extraPathSeparator)
-	v, ok := d.find(keys)
+	v, ok := f.find(keys)
 	if !ok {
 		return 0, fmt.Errorf("unable to find int at [%s]", path)
 	}
